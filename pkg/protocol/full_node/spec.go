@@ -2,7 +2,7 @@ package full_node
 
 import (
 	"encoding/binary"
-	"github.com/ghia/ghia/pkg/protocol/message"
+	"github.com/ghia-xch/ghia/pkg/protocol/message"
 	"math/big"
 )
 

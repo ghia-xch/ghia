@@ -2,12 +2,12 @@ package protocol
 
 import (
 	"github.com/davecgh/go-spew/spew"
-	"github.com/ghia/ghia/pkg"
-	"github.com/ghia/ghia/pkg/protocol/capability"
-	"github.com/ghia/ghia/pkg/protocol/full_node"
-	"github.com/ghia/ghia/pkg/protocol/message"
-	"github.com/ghia/ghia/pkg/protocol/network"
-	"github.com/ghia/ghia/pkg/protocol/node"
+	"github.com/ghia-xch/ghia/pkg"
+	"github.com/ghia-xch/ghia/pkg/protocol/capability"
+	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
+	"github.com/ghia-xch/ghia/pkg/protocol/message"
+	"github.com/ghia-xch/ghia/pkg/protocol/network"
+	"github.com/ghia-xch/ghia/pkg/protocol/node"
 	"github.com/gorilla/websocket"
 )
 

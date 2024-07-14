@@ -3,8 +3,8 @@ package main
 import (
 	"crypto/tls"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/ghia/ghia/pkg/protocol"
-	"github.com/ghia/ghia/pkg/protocol/message"
+	"github.com/ghia-xch/ghia/pkg/protocol"
+	"github.com/ghia-xch/ghia/pkg/protocol/message"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/url"

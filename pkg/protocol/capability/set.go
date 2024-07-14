@@ -1,6 +1,6 @@
 package capability
 
-import "github.com/ghia/ghia/pkg/protocol/message"
+import "github.com/ghia-xch/ghia/pkg/protocol/message"
 
 var DefaultSet = map[Capability]string{
 	Base:         "1",

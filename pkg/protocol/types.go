@@ -1,7 +1,7 @@
 package protocol
 
 import (
-	"github.com/ghia/ghia/pkg/protocol/message"
+	"github.com/ghia-xch/ghia/pkg/protocol/message"
 )
 
 const (
