@@ -130,15 +130,24 @@ func NewMessageEncoder(size int) *MessageEncoder {
 var MessageAttributeNotDecodableError error
 
 type MessageDecoder struct {
+	em  EncodedMessage
+	pos uint32
 }
 
-func (md *MessageDecoder) ParseUint8(em EncodedMessage) (value uint8, err error) {
+func (md *MessageDecoder) Reset(em EncodedMessage) {
+	md.em = em
+	md.pos = 0
+}
 
-	if len(em) == 0 {
+func (md *MessageDecoder) ParseUint8() (value uint8, err error) {
+
+	if len(md.em) == 0 {
 		return 0, MessageAttributeNotDecodableError
 	}
 
-	return em[0], nil
+	md.pos++
+
+	return md.em[0], nil
 }
 
 func (md *MessageDecoder) ParseUint16(em EncodedMessage) (value uint16, err error) {

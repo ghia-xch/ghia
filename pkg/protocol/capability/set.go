@@ -39,15 +39,20 @@ func (s Set) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err
 	return enc.Bytes(), nil
 }
 
-func (s Set) Decode(dec *message.MessageDecoder, em message.EncodedMessage) (err error) {
+func (s Set) Decode(dec *message.MessageDecoder) (err error) {
 
-	/*	var setLen uint32
+	var setLen uint32
 
-		setLen, err = dec.ParseUint32(em)
+	if setLen, err = dec.ParseUint32(); err != nil {
+		return
+	}
 
-		for i uint32 :=0; i < setLen; i++ {
+	for i := 0; i < int(setLen); i++ {
 
-		}*/
+		if setLen, err = dec.ParseUint16(); err != nil {
+			return
+		}
+	}
 
 	return nil
 }
