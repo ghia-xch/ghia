@@ -13,7 +13,14 @@ var DefaultSet = map[Capability]string{
 type Set map[Capability]string
 
 func (s Set) IsEnabled(capability Capability) bool {
-	return false
+
+	val, ok := s[capability]
+
+	if !ok || val == "0" {
+		return false
+	}
+
+	return true
 }
 
 // Encode expects a List[Tuple[uint16,string]]
@@ -32,6 +39,15 @@ func (s Set) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err
 	return enc.Bytes(), nil
 }
 
-func (s Set) Decode(dec *message.MessageDecoder) (err error) {
+func (s Set) Decode(dec *message.MessageDecoder, em message.EncodedMessage) (err error) {
+
+	/*	var setLen uint32
+
+		setLen, err = dec.ParseUint32(em)
+
+		for i uint32 :=0; i < setLen; i++ {
+
+		}*/
+
 	return nil
 }
