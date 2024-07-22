@@ -57,7 +57,7 @@ type RejectBlock struct {
 // 	IncludeTransactionBlock bool
 //}
 
-var RequestBlocksType message.Type = 37
+var RequestBlocksType message.Type = 29
 
 type RequestBlocks [10]byte
 
