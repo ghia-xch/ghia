@@ -1,7 +1,6 @@
 package protocol
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/protocol/capability"
 	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
@@ -48,7 +47,7 @@ func (h *Handshake) Encode(enc *message.MessageEncoder) (em message.EncodedMessa
 func (h *Handshake) Decode(dec *message.MessageDecoder, em message.EncodedMessage) (err error) {
 
 	dec.Reset(em)
-	
+
 	var str string
 
 	if str, err = dec.ParseString(); err != nil {
@@ -102,8 +101,6 @@ func PerformHandshake(conn *websocket.Conn, enc *message.MessageEncoder, h1 *Han
 		return nil, err
 	}
 
-	spew.Dump(em)
-
 	if err = conn.WriteMessage(websocket.BinaryMessage, em); err != nil {
 		return nil, err
 	}
@@ -112,8 +109,6 @@ func PerformHandshake(conn *websocket.Conn, enc *message.MessageEncoder, h1 *Han
 		return nil, err
 	}
 
-	spew.Dump(em)
-
 	var response Handshake
 
 	response.Capabilities = map[capability.Capability]string{}
@@ -121,8 +116,6 @@ func PerformHandshake(conn *websocket.Conn, enc *message.MessageEncoder, h1 *Han
 	if err = response.Decode(message.NewMessageDecoder(), em); err != nil {
 		return
 	}
-
-	spew.Dump(response)
 
 	return &response, nil
 }

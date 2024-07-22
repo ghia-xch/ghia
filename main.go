@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/protocol"
+	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
 	"github.com/ghia-xch/ghia/pkg/protocol/message"
 	"github.com/gorilla/websocket"
 	"log"
@@ -41,15 +42,6 @@ func main() {
 
 	log.Println("connected")
 
-	// var em message.EncodedMessage
-	//
-	// em, err = full_node.RequestBlocksMessage(1, 100, false).Encode(message.NewMessageEncoder(1024))
-	//
-	// rbm = full_node.RequestBlocks{}
-	// if err = rbm.Decode(em); err != nil {
-	//	return
-	// }
-
 	if hs, err = protocol.PerformHandshake(conn, message.NewMessageEncoder(1024), protocol.DefaultHandshake); err != nil {
 		log.Fatal("handshake:", err)
 		return
@@ -57,6 +49,14 @@ func main() {
 
 	//////
 	spew.Dump(hs.NetworkId)
+
+	var em message.EncodedMessage
+
+	em, err = full_node.RequestBlocksMessage(1, 1, false).Encode()
+
+	if err = conn.WriteMessage(websocket.BinaryMessage, em); err != nil {
+		return
+	}
 
 	done := make(chan struct{})
 
@@ -67,12 +67,14 @@ func main() {
 	go func() {
 		defer close(done)
 		for {
-			_, message, err := conn.ReadMessage()
+			_, msg, err := conn.ReadMessage()
+
 			if err != nil {
 				log.Println("read:", err)
 				return
 			}
-			log.Printf("recv: %s", message)
+
+			spew.Dump(message.EncodedMessage(msg))
 		}
 	}()
 

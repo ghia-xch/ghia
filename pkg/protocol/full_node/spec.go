@@ -65,8 +65,8 @@ func RequestBlocksMessage(start uint32, end uint32, includeTxBlock bool) (r Requ
 
 	r[0] = byte(RequestBlocksType)
 
-	binary.BigEndian.PutUint32(r[1:4], start)
-	binary.BigEndian.PutUint32(r[5:8], end)
+	binary.BigEndian.PutUint32(r[1:5], start)
+	binary.BigEndian.PutUint32(r[6:10], end)
 
 	if includeTxBlock {
 		r[9] = 1
@@ -75,8 +75,8 @@ func RequestBlocksMessage(start uint32, end uint32, includeTxBlock bool) (r Requ
 	return
 }
 
-func (r RequestBlocks) Encode() message.EncodedMessage {
-	return r[:]
+func (r RequestBlocks) Encode() (em message.EncodedMessage, err error) {
+	return r[:], nil
 }
 
 /*func (r RequestBlocks) Decode(em message.EncodedMessage) error {
