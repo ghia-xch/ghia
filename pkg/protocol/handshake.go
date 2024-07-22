@@ -31,11 +31,11 @@ type Handshake struct {
 func (h *Handshake) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
 
 	if em, err = enc.Encode(
-		string(h.NetworkId),
+		h.NetworkId,
 		h.ProtocolVersion,
 		h.SoftwareVersion,
 		h.ServerPort,
-		uint8(h.NodeType),
+		h.NodeType,
 		h.Capabilities,
 	); err != nil {
 		return

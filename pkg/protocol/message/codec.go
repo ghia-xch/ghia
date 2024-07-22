@@ -10,7 +10,6 @@ var MessageAttributeNotEncodableError error
 
 type Encodable interface {
 	Encode(enc *MessageEncoder) (em EncodedMessage, err error)
-	Decode(dec *MessageDecoder) (err error)
 }
 
 type MessageEncoder struct {

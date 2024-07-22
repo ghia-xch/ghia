@@ -1,6 +1,12 @@
 package node
 
+import "github.com/ghia-xch/ghia/pkg/protocol/message"
+
 type Type uint8
+
+func (t Type) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
+	return enc.Encode(uint8(t))
+}
 
 const (
 	FullNode   Type = 1
