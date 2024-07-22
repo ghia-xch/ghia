@@ -32,8 +32,8 @@ func (h *Handshake) Encode(enc *message.MessageEncoder) (em message.EncodedMessa
 
 	if em, err = enc.Encode(
 		string(h.NetworkId),
-		string(h.ProtocolVersion),
-		string(h.SoftwareVersion),
+		h.ProtocolVersion,
+		h.SoftwareVersion,
 		h.ServerPort,
 		uint8(h.NodeType),
 		h.Capabilities,
