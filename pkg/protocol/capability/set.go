@@ -42,6 +42,8 @@ func (s Set) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err
 func (s Set) Decode(dec *message.MessageDecoder) (err error) {
 
 	var setLen uint32
+	var capIndex uint16
+	var capIsSet string
 
 	if setLen, err = dec.ParseUint32(); err != nil {
 		return
@@ -49,9 +51,15 @@ func (s Set) Decode(dec *message.MessageDecoder) (err error) {
 
 	for i := 0; i < int(setLen); i++ {
 
-		if setLen, err = dec.ParseUint16(); err != nil {
+		if capIndex, err = dec.ParseUint16(); err != nil {
 			return
 		}
+
+		if capIsSet, err = dec.ParseString(); err != nil {
+			return
+		}
+
+		s[Capability(capIndex)] = capIsSet
 	}
 
 	return nil

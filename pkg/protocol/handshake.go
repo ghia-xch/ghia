@@ -45,7 +45,50 @@ func (h *Handshake) Encode(enc *message.MessageEncoder) (em message.EncodedMessa
 	return enc.Bytes(), nil
 }
 
-func (h *Handshake) Decode(em message.EncodedMessage) (err error) {
+func (h *Handshake) Decode(dec *message.MessageDecoder, em message.EncodedMessage) (err error) {
+
+	dec.Reset(em)
+	
+	var str string
+
+	if str, err = dec.ParseString(); err != nil {
+		return
+	}
+
+	h.NetworkId = network.Network(str)
+
+	if str, err = dec.ParseString(); err != nil {
+		return
+	}
+
+	h.ProtocolVersion = str
+
+	if str, err = dec.ParseString(); err != nil {
+		return
+	}
+
+	h.SoftwareVersion = str
+
+	var port uint16
+
+	if port, err = dec.ParseUint16(); err != nil {
+		return
+	}
+
+	h.ServerPort = port
+
+	var nType uint8
+
+	if nType, err = dec.ParseUint8(); err != nil {
+		return
+	}
+
+	h.NodeType = node.Type(nType)
+
+	if err = h.Capabilities.Decode(dec); err != nil {
+		return
+	}
+
 	return nil
 }
 
@@ -71,7 +114,15 @@ func PerformHandshake(conn *websocket.Conn, enc *message.MessageEncoder, h1 *Han
 
 	spew.Dump(em)
 
-	//h2.Decode(enc, em)
+	var response Handshake
 
-	return nil, nil
+	response.Capabilities = map[capability.Capability]string{}
+
+	if err = response.Decode(message.NewMessageDecoder(), em); err != nil {
+		return
+	}
+
+	spew.Dump(response)
+
+	return &response, nil
 }

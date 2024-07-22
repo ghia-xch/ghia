@@ -130,13 +130,80 @@ func NewMessageEncoder(size int) *MessageEncoder {
 var MessageAttributeNotDecodableError error
 
 type MessageDecoder struct {
-	em  EncodedMessage
-	pos uint32
+	msgType Type
+	id      Id
+	dataLen uint32
+	em      EncodedMessage
+	pos     uint32
 }
 
-func (md *MessageDecoder) Reset(em EncodedMessage) {
+const MinHeaderLength = 6
+const MaxHeaderLength = 8
+const HasEncodedIdFlag = 1
+
+func (md *MessageDecoder) parseHeader() (err error) {
+
+	// Parse the message type.
+
+	if md.em == nil || len(md.em) < MinHeaderLength {
+		return MessageAttributeNotDecodableError
+	}
+
+	md.msgType = Type(md.em[0])
+	md.pos++
+
+	// Parse the message optional message id.
+
+	var id uint16
+
+	if md.em[md.pos] == HasEncodedIdFlag {
+
+		if len(md.em) < MaxHeaderLength {
+			return MessageAttributeNotDecodableError
+		}
+
+		if id, err = md.ParseUint16(); err != nil {
+			return MessageAttributeNotDecodableError
+		}
+
+		md.id = Id(id)
+	}
+
+	md.pos++
+
+	// Parse the data frame
+
+	var dataLen uint32
+
+	if dataLen, err = md.ParseUint32(); err != nil {
+		return MessageAttributeNotDecodableError
+	}
+
+	if uint32(len(md.em[md.pos:])) != dataLen {
+		return MessageAttributeNotDecodableError
+	}
+
+	return nil
+}
+
+func (md *MessageDecoder) Reset(em EncodedMessage) (err error) {
+
 	md.em = em
 	md.pos = 0
+
+	return md.parseHeader()
+}
+
+func (md *MessageDecoder) Type() Type {
+	return md.msgType
+}
+
+func (md *MessageDecoder) HasId() bool {
+	return md.id != 0
+}
+
+func (md *MessageDecoder) Id() Id {
+	return md.id
 }
 
 func (md *MessageDecoder) ParseUint8() (value uint8, err error) {
@@ -150,29 +217,58 @@ func (md *MessageDecoder) ParseUint8() (value uint8, err error) {
 	return md.em[0], nil
 }
 
-func (md *MessageDecoder) ParseUint16(em EncodedMessage) (value uint16, err error) {
+const (
+	Uint8Len     = 1
+	Uint16Len    = 2
+	Uint32Len    = 4
+	StringMinLen = 5
+)
 
-	if len(em) < 2 {
+func (md *MessageDecoder) ParseUint16() (value uint16, err error) {
+
+	if len(md.em[md.pos:]) < Uint16Len {
 		return 0, MessageAttributeNotDecodableError
 	}
 
-	return binary.BigEndian.Uint16(em), nil
+	value = binary.BigEndian.Uint16(md.em[md.pos:])
+
+	md.pos += Uint16Len
+
+	return
 }
 
-func (md *MessageDecoder) ParseUint32(em EncodedMessage) (value uint32, err error) {
+func (md *MessageDecoder) ParseUint32() (value uint32, err error) {
 
-	if len(em) < 4 {
+	if len(md.em[md.pos:]) < Uint32Len {
 		return 0, MessageAttributeNotDecodableError
 	}
 
-	return binary.BigEndian.Uint32(em), nil
+	value = binary.BigEndian.Uint32(md.em[md.pos:])
+
+	md.pos += Uint32Len
+
+	return
 }
 
-func (md *MessageDecoder) ParseString(em EncodedMessage) (value string, err error) {
+func (md *MessageDecoder) ParseString() (value string, err error) {
 
-	if len(em) < 5 || binary.BigEndian.Uint32(em) < uint32(len(em)-4) {
+	var strLen uint32
+
+	if strLen, err = md.ParseUint32(); err != nil {
+		return "", err
+	}
+
+	if uint32(len(md.em[md.pos:])) < strLen {
 		return "", MessageAttributeNotDecodableError
 	}
 
-	return string(em[4 : 4+binary.BigEndian.Uint32(em)]), err
+	value = string(md.em[md.pos : md.pos+strLen])
+
+	md.pos += strLen
+
+	return
+}
+
+func NewMessageDecoder() *MessageDecoder {
+	return &MessageDecoder{em: nil, pos: 0}
 }
