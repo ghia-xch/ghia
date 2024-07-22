@@ -109,13 +109,20 @@ func PerformHandshake(conn *websocket.Conn, enc *message.MessageEncoder, h1 *Han
 		return nil, err
 	}
 
-	var response Handshake
+	h2 = MakeHandshake()
 
-	response.Capabilities = map[capability.Capability]string{}
-
-	if err = response.Decode(message.NewMessageDecoder(), em); err != nil {
+	if err = h2.Decode(message.NewMessageDecoder(), em); err != nil {
 		return
 	}
 
-	return &response, nil
+	return h2, nil
+}
+
+func MakeHandshake() *Handshake {
+
+	var handshake Handshake
+
+	handshake.Capabilities = map[capability.Capability]string{}
+
+	return &handshake
 }
