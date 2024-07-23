@@ -20,7 +20,7 @@ var DefaultHandshake = &Handshake{
 }
 
 type Handshake struct {
-	NetworkId       network.Network
+	NetworkId       *network.Network
 	ProtocolVersion string
 	SoftwareVersion string
 	ServerPort      uint16
@@ -54,7 +54,7 @@ func (h *Handshake) Decode(dec *message.MessageDecoder, em message.EncodedMessag
 		return
 	}
 
-	h.NetworkId = network.Network{message.String(str)}
+	h.NetworkId = network.NewNetwork(str)
 
 	if str, err = dec.ParseString(); err != nil {
 		return
