@@ -1,17 +1,19 @@
 package network
 
-import "github.com/ghia-xch/ghia/pkg/protocol/message"
-
-var (
-	Mainnet = &Network{message.NewString("mainnet")}
-	Testnet = &Network{message.NewString("testnet")}
-	Simnet  = &Network{message.NewString("simnet")}
+import (
+	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 )
 
-type Network struct{ message.String }
+var (
+	Mainnet = &Network{primitive.NewString("mainnet")}
+	Testnet = &Network{primitive.NewString("testnet")}
+	Simnet  = &Network{primitive.NewString("simnet")}
+)
+
+type Network struct{ primitive.String }
 
 var DefaultNetwork *Network = Mainnet
 
 func NewNetwork(str string) *Network {
-	return &Network{message.NewString(str)}
+	return &Network{primitive.NewString(str)}
 }

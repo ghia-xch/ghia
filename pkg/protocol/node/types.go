@@ -1,6 +1,8 @@
 package node
 
-import "github.com/ghia-xch/ghia/pkg/protocol/message"
+import (
+	"github.com/ghia-xch/ghia/pkg/protocol/primitive/message"
+)
 
 type Type uint8
 

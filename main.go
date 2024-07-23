@@ -5,7 +5,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
-	"github.com/ghia-xch/ghia/pkg/protocol/message"
+	"github.com/ghia-xch/ghia/pkg/protocol/primitive/message"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/url"

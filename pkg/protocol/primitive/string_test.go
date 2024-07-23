@@ -1,6 +1,7 @@
-package message
+package primitive
 
 import (
+	"github.com/ghia-xch/ghia/pkg/protocol/primitive/message"
 	"testing"
 )
 
@@ -12,18 +13,18 @@ func TestStringCodec(t *testing.T) {
 	var helloStr = String{&hello}
 	var longerStr = String{&longer}
 
-	var em EncodedMessage
+	var em message.EncodedMessage
 	var err error
 
-	var encoder = NewMessageEncoder(1024)
+	var encoder = message.NewMessageEncoder(1024)
 
-	encoder.Reset(NullType, &NullId)
+	encoder.Reset(message.NullType, &message.NullId)
 
 	if em, err = helloStr.Encode(encoder); err != nil {
 		t.Error("String encode failed.")
 	}
 
-	dec := NewMessageDecoder()
+	dec := message.NewMessageDecoder()
 
 	dec.Reset(em)
 
