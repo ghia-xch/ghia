@@ -54,7 +54,7 @@ func (h *Handshake) Decode(dec *message.MessageDecoder, em message.EncodedMessag
 		return
 	}
 
-	h.NetworkId = network.Network(str)
+	h.NetworkId = network.Network{message.String(str)}
 
 	if str, err = dec.ParseString(); err != nil {
 		return

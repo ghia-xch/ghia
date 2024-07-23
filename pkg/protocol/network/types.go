@@ -2,16 +2,14 @@ package network
 
 import "github.com/ghia-xch/ghia/pkg/protocol/message"
 
-type Network string
-
-func (n Network) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
-	return enc.Encode(string(n))
+type Network struct {
+	message.String
 }
 
-const (
-	Mainnet Network = "mainnet"
-	Testnet Network = "testnet"
-	Simnet  Network = "simnet"
+var (
+	Mainnet Network = Network{message.String("mainnet")}
+	Testnet Network = Network{message.String("testnet")}
+	Simnet  Network = Network{message.String("simnet")}
 )
 
-const DefaultNetwork Network = Mainnet
+var DefaultNetwork Network = Mainnet
