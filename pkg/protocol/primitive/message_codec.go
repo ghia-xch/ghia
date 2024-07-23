@@ -1,4 +1,4 @@
-package message
+package primitive
 
 import (
 	"encoding/binary"

@@ -1,4 +1,4 @@
-package message
+package primitive
 
 const NullType Type = 0
 

@@ -1,7 +1,7 @@
 package capability
 
 import (
-	"github.com/ghia-xch/ghia/pkg/protocol/primitive/message"
+	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 )
 
 var DefaultSet = map[Capability]string{
@@ -26,7 +26,7 @@ func (s Set) IsEnabled(capability Capability) bool {
 }
 
 // Encode expects a List[Tuple[uint16,string]]
-func (s Set) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
+func (s Set) Encode(enc *primitive.MessageEncoder) (em primitive.EncodedMessage, err error) {
 
 	if em, err = enc.Encode(uint32(len(s))); err != nil {
 		return
@@ -41,7 +41,7 @@ func (s Set) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err
 	return enc.Bytes(), nil
 }
 
-func (s Set) Decode(dec *message.MessageDecoder) (err error) {
+func (s Set) Decode(dec *primitive.MessageDecoder) (err error) {
 
 	var setLen uint32
 	var capIndex uint16

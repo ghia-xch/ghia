@@ -5,7 +5,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
-	"github.com/ghia-xch/ghia/pkg/protocol/primitive/message"
+	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/url"
@@ -42,7 +42,7 @@ func main() {
 
 	log.Println("connected")
 
-	if hs, err = protocol.PerformHandshake(conn, message.NewMessageEncoder(1024), protocol.DefaultHandshake); err != nil {
+	if hs, err = protocol.PerformHandshake(conn, primitive.NewMessageEncoder(1024), protocol.DefaultHandshake); err != nil {
 		log.Fatal("handshake:", err)
 		return
 	}
@@ -50,7 +50,7 @@ func main() {
 	//////
 	spew.Dump(hs.NetworkId)
 
-	var em message.EncodedMessage
+	var em primitive.EncodedMessage
 
 	em, err = full_node.RequestBlocksMessage(1, 1, false).Encode()
 
@@ -74,7 +74,7 @@ func main() {
 				return
 			}
 
-			spew.Dump(message.EncodedMessage(msg))
+			spew.Dump(primitive.EncodedMessage(msg))
 		}
 	}()
 

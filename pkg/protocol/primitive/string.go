@@ -1,18 +1,16 @@
 package primitive
 
-import "github.com/ghia-xch/ghia/pkg/protocol/primitive/message"
-
 type String struct{ *string }
 
 func (s *String) String() string {
 	return *s.string
 }
 
-func (s *String) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
+func (s *String) Encode(enc *MessageEncoder) (em EncodedMessage, err error) {
 	return enc.Encode(*s.string)
 }
 
-func (s *String) Decode(dec *message.MessageDecoder) (err error) {
+func (s *String) Decode(dec *MessageDecoder) (err error) {
 
 	var str string
 
