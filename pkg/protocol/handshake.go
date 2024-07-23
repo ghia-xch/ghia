@@ -10,14 +10,16 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var DefaultHandshake = &Handshake{
-	NetworkId:       network.DefaultNetwork,
-	ProtocolVersion: full_node.ProtocolVersion,
-	SoftwareVersion: pkg.Version,
-	ServerPort:      8444,
-	NodeType:        node.FullNode,
-	Capabilities:    capability.DefaultSet,
-}
+var (
+	DefaultHandshake = &Handshake{
+		NetworkId:       network.DefaultNetwork,
+		ProtocolVersion: full_node.ProtocolVersion,
+		SoftwareVersion: pkg.Version,
+		ServerPort:      8444,
+		NodeType:        node.FullNode,
+		Capabilities:    capability.DefaultSet,
+	}
+)
 
 type Handshake struct {
 	NetworkId       *network.Network
