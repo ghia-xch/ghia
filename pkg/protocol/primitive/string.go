@@ -2,9 +2,7 @@ package primitive
 
 import "github.com/ghia-xch/ghia/pkg/protocol/primitive/message"
 
-type String struct {
-	*string
-}
+type String struct{ *string }
 
 func (s *String) String() string {
 	return *s.string
