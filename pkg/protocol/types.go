@@ -35,7 +35,7 @@ const (
 )
 
 var (
-	SingletonMessages = []primitive.MessageType{
+	singletonMessages = []primitive.MessageType{
 		NewPeak,
 		NewTransaction,
 		NewUnfinishedBlock,
@@ -48,7 +48,7 @@ var (
 		// MempoolItemsRemoved,
 	}
 
-	ValidResponseMessages = map[primitive.MessageType][]primitive.MessageType{
+	validResponseMessages = map[primitive.MessageType][]primitive.MessageType{
 		RequestTransaction:     {RespondTransaction},
 		RequestProofOfWeight:   {RespondProofOfWeight},
 		RequestBlock:           {RespondBlock, RejectBlock},
@@ -63,7 +63,7 @@ var (
 
 func HasExpectedResponse(mt primitive.MessageType) (isExpected bool) {
 
-	_, isExpected = ValidResponseMessages[mt]
+	_, isExpected = validResponseMessages[mt]
 
 	return
 }
@@ -72,7 +72,7 @@ func IsValidResponse(sent primitive.MessageType, recv primitive.MessageType) (is
 
 	var responses []primitive.MessageType
 
-	responses, isValid = ValidResponseMessages[sent]
+	responses, isValid = validResponseMessages[sent]
 
 	if !isValid {
 		return
