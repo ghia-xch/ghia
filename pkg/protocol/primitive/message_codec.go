@@ -6,6 +6,15 @@ import (
 
 type EncodedMessage []byte
 
+func (em EncodedMessage) Type() MessageType {
+
+	if len(em) == 0 {
+		return NullType
+	}
+
+	return MessageType(em[0])
+}
+
 var MessageAttributeNotEncodableError error
 
 type Encodable interface {

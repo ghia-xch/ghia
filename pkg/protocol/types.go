@@ -5,7 +5,14 @@ import (
 )
 
 const (
-	HandshakeType                     primitive.MessageType = 1
+
+	// Universal MessageTypes
+
+	NullType      primitive.MessageType = 0
+	HandshakeType primitive.MessageType = 1
+
+	// FullNode MessageTypes
+
 	NewPeak                           primitive.MessageType = 20
 	NewTransaction                    primitive.MessageType = 21
 	RequestTransaction                primitive.MessageType = 22
@@ -32,6 +39,8 @@ const (
 	RequestPeers                      primitive.MessageType = 43
 	RespondPeers                      primitive.MessageType = 44
 	NoneResponse                      primitive.MessageType = 91
+
+	// Wallet MessageTypes
 )
 
 var (
