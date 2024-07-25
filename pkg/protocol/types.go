@@ -177,6 +177,12 @@ var (
 	}
 )
 
+func HasNoExpectedResponse(mt primitive.MessageType) (isNotExpected bool) {
+	_, isNotExpected = singletons[mt]
+
+	return
+}
+
 func HasExpectedResponse(mt primitive.MessageType) (isExpected bool) {
 
 	_, isExpected = validResponses[mt]
