@@ -12,8 +12,8 @@ func init() {
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Prints the version number",
-	Long:  `Prints the version number.`,
+	Short: "Prints version",
+	Long:  `Prints version.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(pkg.SemVer)
 	},

@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/ghia-xch/ghia/cmd/ghia/crawler"
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -52,6 +53,8 @@ func init() {
 	viper.BindPFlag("logs-level", rootCmd.PersistentFlags().Lookup("logs-level"))
 	viper.BindPFlag("data-dir", rootCmd.PersistentFlags().Lookup("data-dir"))
 	viper.BindPFlag("network", rootCmd.PersistentFlags().Lookup("network"))
+
+	crawler.Init(rootCmd)
 }
 
 func initData() {
