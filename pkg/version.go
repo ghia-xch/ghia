@@ -1,3 +1,6 @@
 package pkg
 
-const Version = "ghia-0.0.1"
+const (
+	SemVer  = "v0.0.1"
+	Version = "ghia-" + SemVer
+)
