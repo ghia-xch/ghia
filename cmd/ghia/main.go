@@ -2,8 +2,11 @@ package main
 
 import (
 	"errors"
+	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/ghia-xch/ghia/cmd/ghia/crawler"
 	"github.com/ghia-xch/ghia/pkg"
+	"github.com/ghia-xch/ghia/pkg/util"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -28,6 +31,10 @@ var (
 		Short: "PoST Freedom.",
 		Long:  ghiaTxt,
 	}
+)
+
+var (
+	l = log.WithField("component", "main")
 )
 
 func init() {
@@ -79,12 +86,18 @@ func initLogging() {
 		logsDir = home + "/.ghia/logs"
 	}
 
-	//log2.SetLogLevel(log2.GetLevelByString(viper.GetString("logs-level"), log2.Debug))
-	//log2.CodeLocations(false)
-	//
-	//if log2.GetLogLevel() == log2.Debug {
-	//	log2.CodeLocations(true)
-	//}
+	log.SetFormatter(&nested.Formatter{
+		HideKeys:        true,
+		FieldsOrder:     []string{"component", "category"},
+		TimestampFormat: "2006-01-02 15:04:05",
+		CallerFirst:     true,
+	})
+
+	log.SetLevel(util.GetLogLevel(viper.GetString("logs-level"), log.DebugLevel))
+
+	if log.GetLevel() == log.DebugLevel {
+		log.SetReportCaller(true)
+	}
 }
 
 func initConfig() {
@@ -104,7 +117,9 @@ func initConfig() {
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
-		//log.E.Ln("failed to read config file:", err)
+
+		l.Errorln("failed to read config file:", err)
+
 		os.Exit(1)
 	}
 
@@ -117,7 +132,9 @@ func persistConfig() {
 	}
 
 	if err := viper.WriteConfig(); err != nil {
-		//log.E.Ln("failed to save config file:", err)
+
+		l.Errorln("failed to save config file:", err)
+
 		os.Exit(1)
 	}
 }
