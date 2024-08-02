@@ -6,12 +6,14 @@ import (
 )
 
 const (
+	baseDirFlag      = "base-dir"
 	networkFlag      = "network"
 	configFileFlag   = "config-file"
 	configSaveFlag   = "config-save"
 	logsDirFlag      = "logs-dir"
 	logsLevelFlag    = "logs-level"
 	logsFormatFlag   = "logs-format"
+	logsNoneFlag     = "logs-none"
 	dataDirFlag      = "data-dir"
 	nodeCAKeyFlag    = "node-ca-key"
 	nodeCACertFlag   = "node-ca-cert"
@@ -21,12 +23,14 @@ const (
 )
 
 var (
+	baseDir       string
 	net           string
 	configFile    string
 	configSave    bool
 	logsDir       string
 	logsLevel     string
 	logsFormat    string
+	logsNone      bool
 	dataDir       string
 	tlsCAKeyPath  string
 	tlsCACertPath string
@@ -36,6 +40,15 @@ var (
 )
 
 func init() {
+
+	// Base
+
+	rootCmd.PersistentFlags().StringVarP(
+		&baseDir, baseDirFlag, "B", "",
+		"set the base directory (default is $HOME/.ghia)",
+	)
+
+	viper.BindPFlag(networkFlag, rootCmd.PersistentFlags().Lookup(networkFlag))
 
 	// Network //
 
@@ -84,6 +97,13 @@ func init() {
 	)
 
 	viper.BindPFlag(logsFormatFlag, rootCmd.PersistentFlags().Lookup(logsFormatFlag))
+
+	rootCmd.PersistentFlags().BoolVarP(
+		&logsNone, logsNoneFlag, "", false,
+		"logs only to stdout (default false)",
+	)
+
+	viper.BindPFlag(logsNoneFlag, rootCmd.PersistentFlags().Lookup(logsNoneFlag))
 
 	// Data //
 
