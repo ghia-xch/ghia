@@ -6,13 +6,13 @@ import (
 )
 
 const (
+	networkFlag      = "network"
 	configFileFlag   = "config-file"
 	configSaveFlag   = "config-save"
 	logsDirFlag      = "logs-dir"
 	logsLevelFlag    = "logs-level"
 	logsFormatFlag   = "logs-format"
 	dataDirFlag      = "data-dir"
-	networkFlag      = "network"
 	nodeCAKeyFlag    = "node-ca-key"
 	nodeCACertFlag   = "node-ca-cert"
 	nodeModeFlag     = "node-tls-mode"
@@ -21,13 +21,13 @@ const (
 )
 
 var (
+	net           string
 	configFile    string
 	configSave    bool
 	logsDir       string
 	logsLevel     string
 	logsFormat    string
 	dataDir       string
-	net           string
 	tlsCAKeyPath  string
 	tlsCACertPath string
 	tlsMode       string
@@ -36,6 +36,15 @@ var (
 )
 
 func init() {
+
+	// Network //
+
+	rootCmd.PersistentFlags().StringVarP(
+		&net, networkFlag, "N", "mainnet",
+		"selects the network [mainnet|testnet|simnet]",
+	)
+
+	viper.BindPFlag(networkFlag, rootCmd.PersistentFlags().Lookup(networkFlag))
 
 	// Config //
 
@@ -80,15 +89,6 @@ func init() {
 	)
 
 	viper.BindPFlag(dataDirFlag, rootCmd.PersistentFlags().Lookup(dataDirFlag))
-
-	// Network //
-
-	rootCmd.PersistentFlags().StringVarP(
-		&net, networkFlag, "N", "mainnet",
-		"selects the network [mainnet|testnet|simnet]",
-	)
-
-	viper.BindPFlag(networkFlag, rootCmd.PersistentFlags().Lookup(networkFlag))
 
 	// Certificate Authority
 
