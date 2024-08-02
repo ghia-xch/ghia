@@ -18,6 +18,7 @@ func init() {
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.AutomaticEnv()
 
+	cobra.OnInitialize(initBase)
 	cobra.OnInitialize(initNetwork)
 	cobra.OnInitialize(initKeys)
 	cobra.OnInitialize(initConfig)
@@ -25,6 +26,29 @@ func init() {
 	cobra.OnInitialize(initData)
 
 	cobra.OnFinalize(persistConfig)
+}
+
+func initBase() {
+
+	var err error
+	var home string
+
+	if viper.GetString(baseDirFlag) == "" {
+
+		if home, err = os.UserHomeDir(); err != nil {
+			cobra.CheckErr(err)
+		}
+
+		if err = os.MkdirAll(home+"/.ghia", 0755); err != nil {
+			cobra.CheckErr(err)
+		}
+
+		return
+	}
+
+	if err = os.MkdirAll(viper.GetString(baseDirFlag), 0755); err != nil {
+		cobra.CheckErr(err)
+	}
 }
 
 var N *network.Network

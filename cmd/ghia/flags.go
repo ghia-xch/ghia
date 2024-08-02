@@ -48,7 +48,7 @@ func init() {
 		"set the base directory (default is $HOME/.ghia)",
 	)
 
-	viper.BindPFlag(networkFlag, rootCmd.PersistentFlags().Lookup(networkFlag))
+	viper.BindPFlag(baseDirFlag, rootCmd.PersistentFlags().Lookup(baseDirFlag))
 
 	// Network //
 
@@ -63,7 +63,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(
 		&configFile, configFileFlag, "C", "",
-		"config file (default is $HOME/.ghia/config.toml)",
+		"config file (default is $GHIA_BASE_DIR/$GHIA_NETWORK/config.toml)",
 	)
 
 	viper.BindPFlag(configFileFlag, rootCmd.PersistentFlags().Lookup(configFileFlag))
