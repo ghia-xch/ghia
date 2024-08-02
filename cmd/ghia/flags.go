@@ -10,6 +10,7 @@ const (
 	configSaveFlag   = "config-save"
 	logsDirFlag      = "logs-dir"
 	logsLevelFlag    = "logs-level"
+	logsFormatFlag   = "logs-format"
 	dataDirFlag      = "data-dir"
 	networkFlag      = "network"
 	nodeCAKeyFlag    = "node-ca-key"
@@ -24,6 +25,7 @@ var (
 	configSave    bool
 	logsDir       string
 	logsLevel     string
+	logsFormat    string
 	dataDir       string
 	net           string
 	tlsCAKeyPath  string
@@ -62,6 +64,13 @@ func init() {
 	)
 
 	viper.BindPFlag(logsLevelFlag, rootCmd.PersistentFlags().Lookup(logsLevelFlag))
+
+	rootCmd.PersistentFlags().StringVarP(
+		&logsFormat, logsFormatFlag, "", "text",
+		"sets logging format [json|text]",
+	)
+
+	viper.BindPFlag(logsFormatFlag, rootCmd.PersistentFlags().Lookup(logsFormatFlag))
 
 	// Data //
 
