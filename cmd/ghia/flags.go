@@ -53,10 +53,14 @@ func init() {
 		"config file (default is $HOME/.ghia/config.toml)",
 	)
 
+	viper.BindPFlag(configFileFlag, rootCmd.PersistentFlags().Lookup(configFileFlag))
+
 	rootCmd.PersistentFlags().BoolVarP(
 		&configSave, configSaveFlag, "", false,
 		"saves the config file with any eligible envs/flags passed,",
 	)
+
+	viper.BindPFlag(configSaveFlag, rootCmd.PersistentFlags().Lookup(configSaveFlag))
 
 	// Logs //
 
