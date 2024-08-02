@@ -1,6 +1,6 @@
 package node
 
-const CertAuthority_Key = `
+const DefaultCAKey = `
 -----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDPP8vbX1mNvkIg
 qdSSl3aO6UYL6PcT3spSK45qUIf3B2qCkmL2cGotxzA8JIVcV7DoI0EgEz4JbaNP
@@ -31,7 +31,7 @@ g7Jtrn7LfogS3KOiVa3QAHoXegMrRf4S3DyP/GW8E27MMvqBEkdCDX53h07wvPng
 -----END PRIVATE KEY-----
 `
 
-const CertAuthority_Certificate = `
+const DefaultCACertificate = `
 -----BEGIN CERTIFICATE-----
 MIIDKTCCAhGgAwIBAgIUXIpxI5MoZQ65/vhc7DK/d5ymoMUwDQYJKoZIhvcNAQEL
 BQAwRDENMAsGA1UECgwEQ2hpYTEQMA4GA1UEAwwHQ2hpYSBDQTEhMB8GA1UECwwY
