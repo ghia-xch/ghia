@@ -229,6 +229,7 @@ const (
 	Uint8Len     = 1
 	Uint16Len    = 2
 	Uint32Len    = 4
+	Uint64Len    = 8
 	StringMinLen = 5
 )
 
@@ -252,6 +253,19 @@ func (md *MessageDecoder) ParseUint32() (value uint32, err error) {
 	}
 
 	value = binary.BigEndian.Uint32(md.em[md.pos:])
+
+	md.pos += Uint32Len
+
+	return
+}
+
+func (md *MessageDecoder) ParseUint64() (value uint64, err error) {
+
+	if len(md.em[md.pos:]) < Uint64Len {
+		return 0, MessageAttributeNotDecodableError
+	}
+
+	value = binary.BigEndian.Uint64(md.em[md.pos:])
 
 	md.pos += Uint32Len
 

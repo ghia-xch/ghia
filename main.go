@@ -3,8 +3,8 @@ package main
 import (
 	"crypto/tls"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/protocol"
-	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
 	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 	"github.com/gorilla/websocket"
 	"log"
@@ -26,11 +26,13 @@ func main() {
 		Path:   "/ws",
 	}
 
-	c, _ := tls.LoadX509KeyPair("keys/public_full_node.crt", "keys/public_full_node.key")
+	//c, _ := tls.LoadX509KeyPair("keys/public_full_node.crt", "keys/public_full_node.key")
+
+	c, _ := tls.X509KeyPair([]byte(node.PublicCertFile), []byte(node.PublicKeyFile))
 
 	websocket.DefaultDialer.TLSClientConfig = &tls.Config{
-		InsecureSkipVerify: true,
-		Certificates:       []tls.Certificate{c},
+		//InsecureSkipVerify: true,
+		Certificates: []tls.Certificate{c},
 	}
 
 	if conn, _, err = websocket.DefaultDialer.Dial(u.String(), nil); err != nil {
@@ -47,16 +49,18 @@ func main() {
 		return
 	}
 
+	spew.Dump(hs)
+
 	//////
 	spew.Dump(hs.NetworkId)
 
-	var em primitive.EncodedMessage
-
-	em, err = full_node.RequestBlocksMessage(1, 1, false).Encode()
-
-	if err = conn.WriteMessage(websocket.BinaryMessage, em); err != nil {
-		return
-	}
+	//var em primitive.EncodedMessage
+	//
+	//em, err = full_node.RequestBlocksMessage(1, 1, false).Encode()
+	//
+	//if err = conn.WriteMessage(websocket.BinaryMessage, em); err != nil {
+	//	return
+	//}
 
 	done := make(chan struct{})
 

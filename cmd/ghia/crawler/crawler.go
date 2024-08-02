@@ -1,8 +1,19 @@
 package crawler
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/ghia-xch/ghia/pkg/crawler"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+)
 
-func init() {}
+var (
+	l = log.WithField("component", "main")
+)
+
+func init() {
+
+	crawler.InitFlags(crawlCommand)
+}
 
 func Init(c *cobra.Command) {
 

@@ -2,10 +2,10 @@ package protocol
 
 import (
 	"github.com/ghia-xch/ghia/pkg"
-	"github.com/ghia-xch/ghia/pkg/protocol/capability"
+	"github.com/ghia-xch/ghia/pkg/node"
+	capability2 "github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
 	"github.com/ghia-xch/ghia/pkg/protocol/network"
-	"github.com/ghia-xch/ghia/pkg/protocol/node"
 	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 	"github.com/gorilla/websocket"
 )
@@ -17,7 +17,7 @@ var (
 		SoftwareVersion: pkg.Version,
 		ServerPort:      8444,
 		NodeType:        node.FullNode,
-		Capabilities:    capability.DefaultSet,
+		Capabilities:    capability2.DefaultSet,
 	}
 )
 
@@ -27,7 +27,7 @@ type Handshake struct {
 	SoftwareVersion string
 	ServerPort      uint16
 	NodeType        node.Type
-	Capabilities    capability.Set
+	Capabilities    capability2.Set
 }
 
 func (h *Handshake) Encode(enc *primitive.MessageEncoder) (em primitive.EncodedMessage, err error) {
@@ -124,7 +124,7 @@ func MakeHandshake() *Handshake {
 
 	var handshake Handshake
 
-	handshake.Capabilities = map[capability.Capability]string{}
+	handshake.Capabilities = map[capability2.Capability]string{}
 
 	return &handshake
 }
