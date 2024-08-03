@@ -188,7 +188,7 @@ func initKeys() {
 		}
 	}
 
-	spew.Dump(cert)
+	spew.Dump(cert.PrivateKey)
 
 	//var err error
 

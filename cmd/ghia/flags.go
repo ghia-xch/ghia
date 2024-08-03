@@ -17,7 +17,6 @@ const (
 	dataDirFlag        = "data-dir"
 	nodeCAKeyFileFlag  = "node-ca-key"
 	nodeCACertFileFlag = "node-ca-cert"
-	nodeModeFlag       = "node-tls-mode"
 	nodeKeyPathFlag    = "node-tls-key-path"
 	nodeCertPathFlag   = "node-tls-cert-path"
 )
@@ -34,7 +33,6 @@ var (
 	dataDir        string
 	nodeCAKeyPath  string
 	nodeCACertPath string
-	tlsMode        string
 	nodeKeyPath    string
 	nodeCertPath   string
 )
@@ -131,13 +129,6 @@ func init() {
 	viper.BindPFlag(nodeCACertFileFlag, rootCmd.PersistentFlags().Lookup(nodeCACertFileFlag))
 
 	// Node Certificate
-
-	rootCmd.PersistentFlags().StringVarP(
-		&tlsMode, nodeModeFlag, "", "public",
-		"selects which embedded keypair to use [public|private]",
-	)
-
-	viper.BindPFlag(nodeModeFlag, rootCmd.PersistentFlags().Lookup(nodeModeFlag))
 
 	rootCmd.PersistentFlags().StringVarP(
 		&nodeKeyPath, nodeKeyPathFlag, "", "",
