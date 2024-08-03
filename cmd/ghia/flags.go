@@ -79,7 +79,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(
 		&logsDir, logsDirFlag, "L", "",
-		"logging directory (default is $HOME/.ghia/logs)",
+		"logging directory (default is $GHIA_BASE_DIR/$GHIA_NETWORK/logs)",
 	)
 
 	viper.BindPFlag(logsDirFlag, rootCmd.PersistentFlags().Lookup(logsDirFlag))
@@ -109,7 +109,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(
 		&dataDir, dataDirFlag, "D", "",
-		"data directory (default is $HOME/.ghia/data)",
+		"data directory (default is $GHIA_BASE_DIR/$GHIA_NETWORK/data)",
 	)
 
 	viper.BindPFlag(dataDirFlag, rootCmd.PersistentFlags().Lookup(dataDirFlag))
@@ -141,14 +141,14 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(
 		&nodeKeyPath, nodeKeyPathFlag, "", "",
-		"specifies a TLS key path for the node (defaults $HOME/.ghia/keys)",
+		"specifies a TLS key path for the node (defaults $GHIA_BASE_DIR/$GHIA_NETWORK/keys)",
 	)
 
 	viper.BindPFlag(nodeKeyPathFlag, rootCmd.PersistentFlags().Lookup(nodeKeyPathFlag))
 
 	rootCmd.PersistentFlags().StringVarP(
 		&nodeCertPath, nodeCertPathFlag, "", "",
-		"specifies a TLS cert path for the node (defaults $HOME/.ghia/keys)",
+		"specifies a TLS cert path for the node (defaults $GHIA_BASE_DIR/$GHIA_NETWORK/keys)",
 	)
 
 	viper.BindPFlag(nodeCertPathFlag, rootCmd.PersistentFlags().Lookup(nodeCertPathFlag))
