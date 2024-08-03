@@ -67,6 +67,15 @@ hvSyoNSYmfvh7vplRKS1wYeA119LL5fRXvOQNW6pSsts17auu38HWQGagSIAd1UP
 -----END CERTIFICATE-----
 `
 
+var (
+	DefaultTLSConfig = &tls.Config{
+		ServerName:   "chia.net",
+		Certificates: []tls.Certificate{},
+		RootCAs:      &x509.CertPool{},
+		MinVersion:   tls.VersionTLS12,
+	}
+)
+
 func GenerateCASignedCert(caCertPem []byte, caKeyPem []byte) (rCert []byte, rKey []byte, err error) {
 
 	var ca tls.Certificate
@@ -88,7 +97,7 @@ func GenerateCASignedCert(caCertPem []byte, caKeyPem []byte) (rCert []byte, rKey
 
 	var certPrivKey *rsa.PrivateKey
 
-	if certPrivKey, err = rsa.GenerateKey(rand.Reader, 4096); err != nil {
+	if certPrivKey, err = rsa.GenerateKey(rand.Reader, 256); err != nil {
 		return nil, nil, err
 	}
 

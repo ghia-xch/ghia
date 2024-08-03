@@ -2,9 +2,9 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	nested "github.com/antonfisher/nested-logrus-formatter"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/protocol/network"
 	"github.com/ghia-xch/ghia/pkg/util"
@@ -173,23 +173,60 @@ func initData() {
 func initKeys() {
 
 	var err error
-	var cert tls.Certificate
 
-	if cert, err = tls.X509KeyPair([]byte(node.DefaultCACertificate), []byte(node.DefaultCAKey)); err != nil {
-		cobra.CheckErr(err)
-	}
+	var caCertPEM = []byte(node.DefaultCACertificate)
+	var caKeyPEM = []byte(node.DefaultCAKey)
 
 	if viper.GetString(nodeCAKeyFileFlag) != "" {
 
-		cert, err = tls.LoadX509KeyPair(viper.GetString(nodeCAKeyFileFlag), viper.GetString(nodeCACertFileFlag))
+		if caCertPEM, err = os.ReadFile(viper.GetString(nodeCACertFileFlag)); err != nil {
+			cobra.CheckErr(err)
+		}
 
-		if err != nil {
+		if caKeyPEM, err = os.ReadFile(viper.GetString(nodeCAKeyFileFlag)); err != nil {
 			cobra.CheckErr(err)
 		}
 	}
 
-	spew.Dump(cert.PrivateKey)
+	caPool := x509.NewCertPool()
+	caPool.AppendCertsFromPEM(caCertPEM)
 
-	//var err error
+	node.DefaultTLSConfig.RootCAs = caPool
 
+	if viper.GetString(nodeKeyPathFlag) == "" {
+
+		if err = os.MkdirAll(viper.GetString(baseDirFlag)+"/"+N.String.String()+"/keys", 0755); err != nil {
+			cobra.CheckErr(err)
+		}
+
+		viper.Set(nodeKeyPathFlag, viper.GetString(baseDirFlag)+"/"+N.String.String()+"/keys/chia.key")
+		viper.Set(nodeCertPathFlag, viper.GetString(baseDirFlag)+"/"+N.String.String()+"/keys/chia.crt")
+	}
+
+	var rCert, rKey []byte
+
+	if _, err := os.Stat(viper.GetString(nodeKeyPathFlag)); errors.Is(err, os.ErrNotExist) {
+
+		if rCert, rKey, err = node.GenerateCASignedCert(caCertPEM, caKeyPEM); err != nil {
+			cobra.CheckErr(err)
+		}
+
+		if err = os.WriteFile(viper.GetString(nodeCertPathFlag), rCert, 0755); err != nil {
+			cobra.CheckErr(err)
+		}
+
+		if err = os.WriteFile(viper.GetString(nodeKeyPathFlag), rKey, 0666); err != nil {
+			cobra.CheckErr(err)
+		}
+
+		return
+	}
+
+	var c tls.Certificate
+
+	if c, err = tls.LoadX509KeyPair(viper.GetString(nodeCertPathFlag), viper.GetString(nodeKeyPathFlag)); err != nil {
+		cobra.CheckErr(err)
+	}
+
+	node.DefaultTLSConfig.Certificates = append(node.DefaultTLSConfig.Certificates, c)
 }
