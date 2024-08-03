@@ -31,19 +31,15 @@ func init() {
 func initBase() {
 
 	var err error
-	var home string
+	var homeDir string
 
 	if viper.GetString(baseDirFlag) == "" {
 
-		if home, err = os.UserHomeDir(); err != nil {
+		if homeDir, err = os.UserHomeDir(); err != nil {
 			cobra.CheckErr(err)
 		}
 
-		if err = os.MkdirAll(home+"/.ghia", 0755); err != nil {
-			cobra.CheckErr(err)
-		}
-
-		return
+		viper.Set(baseDirFlag, homeDir+"/.ghia")
 	}
 
 	if err = os.MkdirAll(viper.GetString(baseDirFlag), 0755); err != nil {
@@ -67,12 +63,18 @@ func initNetwork() {
 
 func initConfig() {
 
-	if configFile == "" {
+	var err error
+	var configBase string
 
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
+	if viper.GetString(configFileFlag) == "" {
 
-		configFile = home + "/.ghia/" + N.String.String() + "/config.toml"
+		configBase = viper.GetString(baseDirFlag) + "/" + N.String.String()
+
+		if err = os.MkdirAll(configBase, 0755); err != nil {
+			cobra.CheckErr(err)
+		}
+
+		viper.Set(configFileFlag, configBase+"/config.toml")
 	}
 
 	viper.SetConfigFile(configFile)
