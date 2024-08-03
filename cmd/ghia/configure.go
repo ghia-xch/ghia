@@ -77,7 +77,7 @@ func initConfig() {
 		viper.Set(configFileFlag, configBase+"/config.toml")
 	}
 
-	viper.SetConfigFile(configFile)
+	viper.SetConfigFile(viper.GetString(configFileFlag))
 
 	if _, err := os.Stat(configFile); errors.Is(err, os.ErrNotExist) {
 		return
@@ -94,7 +94,7 @@ func initConfig() {
 
 func persistConfig() {
 
-	if !configSave {
+	if !viper.GetBool(configSaveFlag) {
 		return
 	}
 
