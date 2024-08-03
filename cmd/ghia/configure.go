@@ -156,12 +156,14 @@ func initLogging() {
 
 func initData() {
 
-	if viper.GetString("data-dir") == "" {
-		home, err := os.UserHomeDir()
+	var err error
 
+	if viper.GetString(dataDirFlag) == "" {
+		viper.Set(dataDirFlag, viper.GetString(baseDirFlag)+"/"+N.String.String()+"/data")
+	}
+
+	if err = os.MkdirAll(viper.GetString(dataDirFlag), 0755); err != nil {
 		cobra.CheckErr(err)
-
-		viper.Set("data-dir", home+"/.ghia/data")
 	}
 }
 
