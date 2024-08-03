@@ -108,12 +108,14 @@ func persistConfig() {
 
 func initLogging() {
 
-	if logsDir == "" {
+	log.SetLevel(
+		util.GetLogLevel(
+			viper.GetString(logsLevelFlag), log.DebugLevel,
+		),
+	)
 
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		logsDir = home + "/.ghia/logs"
+	if log.GetLevel() == log.DebugLevel {
+		log.SetReportCaller(true)
 	}
 
 	log.SetFormatter(
@@ -125,15 +127,31 @@ func initLogging() {
 		},
 	)
 
-	log.SetLevel(
-		util.GetLogLevel(
-			viper.GetString(logsLevelFlag), log.DebugLevel,
-		),
-	)
-
-	if log.GetLevel() == log.DebugLevel {
-		log.SetReportCaller(true)
+	if viper.GetString(logsFormatFlag) == "json" {
+		log.SetFormatter(&log.JSONFormatter{})
 	}
+
+	if viper.GetBool(logsNoneFlag) {
+		return
+	}
+
+	var err error
+
+	if viper.GetString(logsDirFlag) == "" {
+		viper.Set(logsDirFlag, viper.GetString(baseDirFlag)+"/"+N.String.String()+"/logs")
+	}
+
+	if err = os.MkdirAll(viper.GetString(logsDirFlag), 0755); err != nil {
+		cobra.CheckErr(err)
+	}
+
+	var file *os.File
+
+	if file, err = os.OpenFile(viper.GetString(logsDirFlag)+"/ghia.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666); err != nil {
+		cobra.CheckErr(err)
+	}
+
+	log.SetOutput(file)
 }
 
 func initData() {
