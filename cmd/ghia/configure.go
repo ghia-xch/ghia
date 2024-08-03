@@ -104,17 +104,6 @@ func persistConfig() {
 	}
 }
 
-func initData() {
-
-	if viper.GetString("data-dir") == "" {
-		home, err := os.UserHomeDir()
-
-		cobra.CheckErr(err)
-
-		viper.Set("data-dir", home+"/.ghia/data")
-	}
-}
-
 func initLogging() {
 
 	if logsDir == "" {
@@ -142,6 +131,17 @@ func initLogging() {
 
 	if log.GetLevel() == log.DebugLevel {
 		log.SetReportCaller(true)
+	}
+}
+
+func initData() {
+
+	if viper.GetString("data-dir") == "" {
+		home, err := os.UserHomeDir()
+
+		cobra.CheckErr(err)
+
+		viper.Set("data-dir", home+"/.ghia/data")
 	}
 }
 
