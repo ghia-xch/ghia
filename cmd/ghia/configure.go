@@ -20,8 +20,8 @@ func init() {
 
 	cobra.OnInitialize(initBase)
 	cobra.OnInitialize(initNetwork)
-	cobra.OnInitialize(initKeys)
 	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initKeys)
 	cobra.OnInitialize(initLogging)
 	cobra.OnInitialize(initData)
 
@@ -60,6 +60,45 @@ func initNetwork() {
 	if N, err = network.Select(viper.GetString("network")); err != nil {
 
 		l.Fatal(err)
+
+		os.Exit(1)
+	}
+}
+
+func initConfig() {
+
+	if configFile == "" {
+
+		home, err := os.UserHomeDir()
+		cobra.CheckErr(err)
+
+		configFile = home + "/.ghia/" + N.String.String() + "/config.toml"
+	}
+
+	viper.SetConfigFile(configFile)
+
+	if _, err := os.Stat(configFile); errors.Is(err, os.ErrNotExist) {
+		return
+	}
+
+	if err := viper.ReadInConfig(); err != nil {
+
+		l.Errorln("failed to read config file:", err)
+
+		os.Exit(1)
+	}
+
+}
+
+func persistConfig() {
+
+	if !configSave {
+		return
+	}
+
+	if err := viper.WriteConfig(); err != nil {
+
+		l.Errorln("failed to save config file:", err)
 
 		os.Exit(1)
 	}
@@ -109,44 +148,5 @@ func initLogging() {
 
 	if log.GetLevel() == log.DebugLevel {
 		log.SetReportCaller(true)
-	}
-}
-
-func initConfig() {
-
-	if configFile == "" {
-
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		configFile = home + "/.ghia/" + N.String.String() + "/config.toml"
-	}
-
-	viper.SetConfigFile(configFile)
-
-	if _, err := os.Stat(configFile); errors.Is(err, os.ErrNotExist) {
-		return
-	}
-
-	if err := viper.ReadInConfig(); err != nil {
-
-		l.Errorln("failed to read config file:", err)
-
-		os.Exit(1)
-	}
-
-}
-
-func persistConfig() {
-
-	if !configSave {
-		return
-	}
-
-	if err := viper.WriteConfig(); err != nil {
-
-		l.Errorln("failed to save config file:", err)
-
-		os.Exit(1)
 	}
 }
