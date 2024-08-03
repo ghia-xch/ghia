@@ -6,37 +6,37 @@ import (
 )
 
 const (
-	baseDirFlag      = "base-dir"
-	networkFlag      = "network"
-	configFileFlag   = "config-file"
-	configSaveFlag   = "config-save"
-	logsDirFlag      = "logs-dir"
-	logsLevelFlag    = "logs-level"
-	logsFormatFlag   = "logs-format"
-	logsNoneFlag     = "logs-none"
-	dataDirFlag      = "data-dir"
-	nodeCAKeyFlag    = "node-ca-key"
-	nodeCACertFlag   = "node-ca-cert"
-	nodeModeFlag     = "node-tls-mode"
-	nodeKeyPathFlag  = "node-tls-key-path"
-	nodeCertPathFlag = "node-tls-cert-path"
+	baseDirFlag        = "base-dir"
+	networkFlag        = "network"
+	configFileFlag     = "config-file"
+	configSaveFlag     = "config-save"
+	logsDirFlag        = "logs-dir"
+	logsLevelFlag      = "logs-level"
+	logsFormatFlag     = "logs-format"
+	logsNoneFlag       = "logs-none"
+	dataDirFlag        = "data-dir"
+	nodeCAKeyFileFlag  = "node-ca-key"
+	nodeCACertFileFlag = "node-ca-cert"
+	nodeModeFlag       = "node-tls-mode"
+	nodeKeyPathFlag    = "node-tls-key-path"
+	nodeCertPathFlag   = "node-tls-cert-path"
 )
 
 var (
-	baseDir       string
-	net           string
-	configFile    string
-	configSave    bool
-	logsDir       string
-	logsLevel     string
-	logsFormat    string
-	logsNone      bool
-	dataDir       string
-	tlsCAKeyPath  string
-	tlsCACertPath string
-	tlsMode       string
-	nodeKeyPath   string
-	nodeCertPath  string
+	baseDir        string
+	net            string
+	configFile     string
+	configSave     bool
+	logsDir        string
+	logsLevel      string
+	logsFormat     string
+	logsNone       bool
+	dataDir        string
+	nodeCAKeyPath  string
+	nodeCACertPath string
+	tlsMode        string
+	nodeKeyPath    string
+	nodeCertPath   string
 )
 
 func init() {
@@ -117,18 +117,18 @@ func init() {
 	// Certificate Authority
 
 	rootCmd.PersistentFlags().StringVarP(
-		&tlsCAKeyPath, nodeCAKeyFlag, "", "",
+		&nodeCAKeyPath, nodeCAKeyFileFlag, "", "",
 		"specifies the certificate authority key used to sign the node cert (defaults to embedded key)",
 	)
 
-	viper.BindPFlag(nodeCAKeyFlag, rootCmd.PersistentFlags().Lookup(nodeCAKeyFlag))
+	viper.BindPFlag(nodeCAKeyFileFlag, rootCmd.PersistentFlags().Lookup(nodeCAKeyFileFlag))
 
 	rootCmd.PersistentFlags().StringVarP(
-		&tlsCACertPath, nodeCACertFlag, "", "",
+		&nodeCACertPath, nodeCACertFileFlag, "", "",
 		"specifies a custom certificate authority cert used to sign the node cert (defaults to embedded cert)",
 	)
 
-	viper.BindPFlag(nodeCACertFlag, rootCmd.PersistentFlags().Lookup(nodeCACertFlag))
+	viper.BindPFlag(nodeCACertFileFlag, rootCmd.PersistentFlags().Lookup(nodeCACertFileFlag))
 
 	// Node Certificate
 

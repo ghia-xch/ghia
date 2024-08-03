@@ -1,8 +1,11 @@
 package main
 
 import (
+	"crypto/tls"
 	"errors"
 	nested "github.com/antonfisher/nested-logrus-formatter"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/protocol/network"
 	"github.com/ghia-xch/ghia/pkg/util"
 	log "github.com/sirupsen/logrus"
@@ -168,6 +171,24 @@ func initData() {
 }
 
 func initKeys() {
+
+	var err error
+	var cert tls.Certificate
+
+	if cert, err = tls.X509KeyPair([]byte(node.DefaultCACertificate), []byte(node.DefaultCAKey)); err != nil {
+		cobra.CheckErr(err)
+	}
+
+	if viper.GetString(nodeCAKeyFileFlag) != "" {
+
+		cert, err = tls.LoadX509KeyPair(viper.GetString(nodeCAKeyFileFlag), viper.GetString(nodeCACertFileFlag))
+
+		if err != nil {
+			cobra.CheckErr(err)
+		}
+	}
+
+	spew.Dump(cert)
 
 	//var err error
 
