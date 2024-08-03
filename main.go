@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/protocol"
@@ -27,12 +28,28 @@ func main() {
 	}
 
 	//c, _ := tls.LoadX509KeyPair("keys/public_full_node.crt", "keys/public_full_node.key")
+	//c, _ := tls.X509KeyPair([]byte(node.PublicCertFile), []byte(node.PublicKeyFile))
 
-	c, _ := tls.X509KeyPair([]byte(node.PublicCertFile), []byte(node.PublicKeyFile))
+	var certPem []byte
+	var certKeyPem []byte
+
+	certPem, certKeyPem, err = node.GenerateCASignedCert([]byte(node.DefaultCACertificate), []byte(node.DefaultCAKey))
+
+	if err != nil {
+		log.Fatal("dial:", err)
+		return
+	}
+
+	c, _ := tls.X509KeyPair(certPem, certKeyPem)
+
+	caPool := x509.NewCertPool()
+	caPool.AppendCertsFromPEM([]byte(node.DefaultCACertificate))
 
 	websocket.DefaultDialer.TLSClientConfig = &tls.Config{
-		//InsecureSkipVerify: true,
+		ServerName:   "chia.net",
 		Certificates: []tls.Certificate{c},
+		RootCAs:      caPool,
+		MinVersion:   tls.VersionTLS12,
 	}
 
 	if conn, _, err = websocket.DefaultDialer.Dial(u.String(), nil); err != nil {

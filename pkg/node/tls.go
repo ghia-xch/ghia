@@ -1,5 +1,19 @@
 package node
 
+import (
+	"bytes"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/tls"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
+	"errors"
+	"math/big"
+	"net"
+	"time"
+)
+
 const DefaultCAKey = `
 -----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDPP8vbX1mNvkIg
@@ -52,3 +66,70 @@ hvSyoNSYmfvh7vplRKS1wYeA119LL5fRXvOQNW6pSsts17auu38HWQGagSIAd1UP
 1r1R9mf4iMIUv1zc2sHVc1omxnCw9+7U4GMWLtL5OgyJyfNyoxk3tC+D3KNU
 -----END CERTIFICATE-----
 `
+
+func GenerateCASignedCert(caCertPem []byte, caKeyPem []byte) (rCert []byte, rKey []byte, err error) {
+
+	var ca tls.Certificate
+	var caCert *x509.Certificate
+
+	if ca, err = tls.X509KeyPair(caCertPem, caKeyPem); err != nil {
+		return nil, nil, err
+	}
+
+	var certDERBlock *pem.Block
+
+	if certDERBlock, caCertPem = pem.Decode(caCertPem); certDERBlock == nil {
+		return nil, nil, errors.New("failed to decode CA certificate")
+	}
+
+	if caCert, err = x509.ParseCertificate(certDERBlock.Bytes); err != nil {
+		return nil, nil, err
+	}
+
+	var certPrivKey *rsa.PrivateKey
+
+	if certPrivKey, err = rsa.GenerateKey(rand.Reader, 4096); err != nil {
+		return nil, nil, err
+	}
+
+	cert := &x509.Certificate{
+		SerialNumber: big.NewInt(1658),
+		Subject: pkix.Name{
+			Names:         []pkix.AttributeTypeAndValue{},
+			Organization:  []string{"Chia"},
+			Country:       []string{"US"},
+			Province:      []string{""},
+			Locality:      []string{"San Francisco"},
+			StreetAddress: []string{"Golden Gate Bridge"},
+			PostalCode:    []string{"94016"},
+		},
+		IPAddresses:  []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback},
+		NotBefore:    time.Now().Add(-24 * time.Hour),
+		NotAfter:     time.Now().AddDate(80, 0, 0),
+		SubjectKeyId: []byte{1, 2, 3, 4, 6},
+		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
+		KeyUsage:     x509.KeyUsageDigitalSignature,
+	}
+
+	certBytes, err := x509.CreateCertificate(rand.Reader, cert, caCert, &certPrivKey.PublicKey, ca.PrivateKey)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	certPEM := new(bytes.Buffer)
+
+	pem.Encode(certPEM, &pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: certBytes,
+	})
+
+	certPrivKeyPEM := new(bytes.Buffer)
+
+	pem.Encode(certPrivKeyPEM, &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(certPrivKey),
+	})
+
+	return certPEM.Bytes(), certPrivKeyPEM.Bytes(), nil
+}
