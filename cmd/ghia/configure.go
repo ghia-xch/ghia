@@ -21,9 +21,9 @@ func init() {
 	cobra.OnInitialize(initBase)
 	cobra.OnInitialize(initNetwork)
 	cobra.OnInitialize(initConfig)
-	cobra.OnInitialize(initKeys)
 	cobra.OnInitialize(initLogging)
 	cobra.OnInitialize(initData)
+	cobra.OnInitialize(initKeys)
 
 	cobra.OnFinalize(persistConfig)
 }
@@ -104,12 +104,6 @@ func persistConfig() {
 	}
 }
 
-func initKeys() {
-
-	//var err error
-
-}
-
 func initData() {
 
 	if viper.GetString("data-dir") == "" {
@@ -149,4 +143,10 @@ func initLogging() {
 	if log.GetLevel() == log.DebugLevel {
 		log.SetReportCaller(true)
 	}
+}
+
+func initKeys() {
+
+	//var err error
+
 }
