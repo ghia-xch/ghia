@@ -218,8 +218,6 @@ func initKeys() {
 		if err = os.WriteFile(viper.GetString(nodeKeyPathFlag), rKey, 0666); err != nil {
 			cobra.CheckErr(err)
 		}
-
-		return
 	}
 
 	var c tls.Certificate

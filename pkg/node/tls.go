@@ -97,21 +97,17 @@ func GenerateCASignedCert(caCertPem []byte, caKeyPem []byte) (rCert []byte, rKey
 
 	var certPrivKey *rsa.PrivateKey
 
-	if certPrivKey, err = rsa.GenerateKey(rand.Reader, 256); err != nil {
+	if certPrivKey, err = rsa.GenerateKey(rand.Reader, 2048); err != nil {
 		return nil, nil, err
 	}
 
 	cert := &x509.Certificate{
 		SerialNumber: big.NewInt(1658),
 		Subject: pkix.Name{
-			Names:         []pkix.AttributeTypeAndValue{},
-			Organization:  []string{"Chia"},
-			Country:       []string{"US"},
-			Province:      []string{""},
-			Locality:      []string{"San Francisco"},
-			StreetAddress: []string{"Golden Gate Bridge"},
-			PostalCode:    []string{"94016"},
+			Organization:       []string{"Chia"},
+			OrganizationalUnit: []string{"Organic Farming Division"},
 		},
+		DNSNames:     []string{"chia.net"},
 		IPAddresses:  []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback},
 		NotBefore:    time.Now().Add(-24 * time.Hour),
 		NotAfter:     time.Now().AddDate(80, 0, 0),
