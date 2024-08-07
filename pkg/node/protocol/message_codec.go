@@ -103,7 +103,20 @@ func (m *MessageEncoder) Encode(attrs ...any) (em EncodedMessage, err error) {
 
 			buf = m.raw[m.pos : m.pos+len(a)]
 
-			copy(buf, []byte(a))
+			copy(buf, a)
+
+			m.pos += len(a)
+
+		case []byte:
+
+			buf = m.raw[m.pos : m.pos+4]
+			m.pos += 4
+
+			binary.BigEndian.PutUint32(buf, uint32(len(a)))
+
+			buf = m.raw[m.pos : m.pos+len(a)]
+
+			copy(buf, a)
 
 			m.pos += len(a)
 
@@ -287,6 +300,25 @@ func (md *MessageDecoder) ParseString() (value string, err error) {
 	value = string(md.em[md.pos : md.pos+strLen])
 
 	md.pos += strLen
+
+	return
+}
+
+func (md *MessageDecoder) ParseBytes() (value []byte, err error) {
+
+	var bLen uint32
+
+	if bLen, err = md.ParseUint32(); err != nil {
+		return nil, err
+	}
+
+	if uint32(len(md.em[md.pos:])) < bLen {
+		return nil, MessageAttributeNotDecodableError
+	}
+
+	value = md.em[md.pos : md.pos+bLen]
+
+	md.pos += bLen
 
 	return
 }
