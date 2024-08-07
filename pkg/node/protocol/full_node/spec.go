@@ -4,13 +4,13 @@ import (
 	"encoding/binary"
 	protocol2 "github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/primitive"
-	"math/big"
+	"lukechampine.com/uint128"
 )
 
 type NewPeak struct {
 	HeaderHash                primitive.Hash
 	Height                    uint32
-	Weight                    big.Int
+	Weight                    uint128.Uint128
 	ForkPointWithPreviousPeak uint32
 	UnfinishedRewardBlockHash primitive.Hash
 }

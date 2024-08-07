@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"encoding/binary"
+	"lukechampine.com/uint128"
 )
 
 type EncodedMessage []byte
@@ -93,6 +94,25 @@ func (m *MessageEncoder) Encode(attrs ...any) (em EncodedMessage, err error) {
 			m.pos += 4
 
 			binary.BigEndian.PutUint32(buf, a)
+
+		case uint64:
+
+			buf = m.raw[m.pos : m.pos+8]
+			m.pos += 8
+
+			binary.BigEndian.PutUint64(buf, a)
+
+		case uint128.Uint128:
+
+			buf = m.raw[m.pos : m.pos+8]
+			m.pos += 8
+
+			binary.BigEndian.PutUint64(buf, a.Hi)
+
+			buf = m.raw[m.pos : m.pos+8]
+			m.pos += 8
+
+			binary.BigEndian.PutUint64(buf, a.Lo)
 
 		case string:
 
@@ -281,6 +301,19 @@ func (md *MessageDecoder) ParseUint64() (value uint64, err error) {
 	value = binary.BigEndian.Uint64(md.em[md.pos:])
 
 	md.pos += Uint32Len
+
+	return
+}
+
+func (md *MessageDecoder) ParseUint128() (value uint128.Uint128, err error) {
+
+	if value.Hi, err = md.ParseUint64(); err != nil {
+		return value, err
+	}
+
+	if value.Lo, err = md.ParseUint64(); err != nil {
+		return value, err
+	}
 
 	return
 }
