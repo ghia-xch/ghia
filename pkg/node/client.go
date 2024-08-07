@@ -1,9 +1,9 @@
-package peer
+package node
 
 import (
 	"context"
 	"errors"
-	"github.com/ghia-xch/ghia/pkg/node"
+	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 	"github.com/gorilla/websocket"
@@ -17,7 +17,7 @@ import (
 
 type Client struct {
 	sync.Mutex
-	info      *PeerInfo
+	info      *peer.PeerInfo
 	conn      *websocket.Conn
 	handshake *Handshake
 	inbound   chan primitive.EncodedMessage
@@ -44,7 +44,7 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 	l.Info("opening socket to peer: ", u.String())
 
-	websocket.DefaultDialer.TLSClientConfig = node.DefaultTLSConfig
+	websocket.DefaultDialer.TLSClientConfig = DefaultTLSConfig
 	websocket.DefaultDialer.HandshakeTimeout = timeout
 
 	if p.conn, _, err = websocket.DefaultDialer.DialContext(ctx, u.String(), nil); err != nil {
@@ -211,7 +211,7 @@ func (p *Client) SendWith(em primitive.EncodedMessage, cb primitive.Callback) (e
 	return nil
 }
 
-func NewClient(peerInfo *PeerInfo) (c *Client) {
+func NewClient(peerInfo *peer.PeerInfo) (c *Client) {
 
 	var client = Client{
 		info:      peerInfo,

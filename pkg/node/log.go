@@ -1,4 +1,4 @@
-package peer
+package node
 
 import log "github.com/sirupsen/logrus"
 

@@ -1,13 +1,16 @@
 package peer
 
+type Peer interface {
+}
+
 type Store interface {
 	Reset() (err error)
 
-	Add(peers ...*Client) (err error)
+	Add(peers ...*Peer) (err error)
 
-	Remove(peers ...*Client) (err error)
+	Remove(peers ...*Peer) (err error)
 
-	Touch(peers ...*Client) (err error)
+	Touch(peers ...*Peer) (err error)
 
-	GetByHost(host string) (peer *Client, err error)
+	GetByHost(host string) (peer *Peer, err error)
 }

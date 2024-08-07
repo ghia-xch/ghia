@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
+	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
@@ -21,9 +22,9 @@ var crawlCommand = &cobra.Command{
 		l.Println("-- ghia (" + viper.GetString("network") + ") - " + pkg.SemVer + " - PoST Freedom. --")
 
 		var err error
-		var client *peer.Client
+		var client *node.Client
 
-		client = peer.NewClient(peer.NewPeerInfo("203.184.53.208", 8444))
+		client = node.NewClient(peer.NewPeerInfo("203.184.53.208", 8444))
 
 		client.Handle(
 			primitive.MessageHandler{

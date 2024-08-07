@@ -1,8 +1,7 @@
-package peer
+package node
 
 import (
 	"github.com/ghia-xch/ghia/pkg"
-	"github.com/ghia-xch/ghia/pkg/node"
 	capability2 "github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
@@ -17,7 +16,7 @@ var (
 		ProtocolVersion: full_node.ProtocolVersion,
 		SoftwareVersion: pkg.Version,
 		ServerPort:      8444,
-		NodeType:        node.FullNode,
+		NodeType:        FullNode,
 		Capabilities:    capability2.DefaultSet,
 	}
 )
@@ -27,7 +26,7 @@ type Handshake struct {
 	ProtocolVersion string
 	SoftwareVersion string
 	ServerPort      uint16
-	NodeType        node.Type
+	NodeType        Type
 	Capabilities    capability2.Set
 }
 
@@ -85,7 +84,7 @@ func (h *Handshake) Decode(dec *primitive.MessageDecoder, em primitive.EncodedMe
 		return
 	}
 
-	h.NodeType = node.Type(nType)
+	h.NodeType = Type(nType)
 
 	if err = h.Capabilities.Decode(dec); err != nil {
 		return
