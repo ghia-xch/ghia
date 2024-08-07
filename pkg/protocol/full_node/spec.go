@@ -2,7 +2,7 @@ package full_node
 
 import (
 	"encoding/binary"
-	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
+	"github.com/ghia-xch/ghia/pkg/protocol"
 	"math/big"
 )
 
@@ -57,7 +57,7 @@ type RejectBlock struct {
 // 	IncludeTransactionBlock bool
 //}
 
-var RequestBlocksType primitive.MessageType = 29
+var RequestBlocksType protocol.MessageType = 29
 
 type RequestBlocks [10]byte
 
@@ -75,7 +75,7 @@ func RequestBlocksMessage(start uint32, end uint32, includeTxBlock bool) (r Requ
 	return
 }
 
-func (r RequestBlocks) Encode() (em primitive.EncodedMessage, err error) {
+func (r RequestBlocks) Encode() (em protocol.EncodedMessage, err error) {
 	return r[:], nil
 }
 
@@ -88,7 +88,7 @@ func (r RequestBlocks) Encode() (em primitive.EncodedMessage, err error) {
 	r = em[0:10]
 }*/
 
-var RespondBlocksType primitive.MessageType = 38
+var RespondBlocksType protocol.MessageType = 38
 
 type FullBlock struct{}
 

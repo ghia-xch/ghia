@@ -1,4 +1,4 @@
-package primitive
+package protocol
 
 type MessageHandler struct {
 	Type     MessageType

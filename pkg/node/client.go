@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/ghia-xch/ghia/pkg/protocol"
-	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 	"github.com/gorilla/websocket"
 	"net/url"
 	"os"
@@ -20,10 +19,10 @@ type Client struct {
 	info      *peer.PeerInfo
 	conn      *websocket.Conn
 	handshake *Handshake
-	inbound   chan primitive.EncodedMessage
-	outbound  chan primitive.EncodedMessage
-	callbacks chan primitive.Callback
-	handlers  map[primitive.MessageType]primitive.Callback
+	inbound   chan protocol.EncodedMessage
+	outbound  chan protocol.EncodedMessage
+	callbacks chan protocol.Callback
+	handlers  map[protocol.MessageType]protocol.Callback
 }
 
 func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
@@ -53,7 +52,7 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 	l.Infoln("performing handshake...")
 
-	if p.handshake, err = PerformHandshake(p.conn, primitive.NewMessageEncoder(1024), DefaultHandshake); err != nil {
+	if p.handshake, err = PerformHandshake(p.conn, protocol.NewMessageEncoder(1024), DefaultHandshake); err != nil {
 		return err
 	}
 
@@ -81,8 +80,8 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 	go func() {
 
-		var msg primitive.EncodedMessage
-		var cb primitive.Callback
+		var msg protocol.EncodedMessage
+		var cb protocol.Callback
 		var ok bool
 
 		for {
@@ -142,7 +141,7 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 	return nil
 }
 
-func (c *Client) Handle(handlers ...primitive.MessageHandler) {
+func (c *Client) Handle(handlers ...protocol.MessageHandler) {
 	for _, handler := range handlers {
 		c.handlers[handler.Type] = handler.Callback
 	}
@@ -170,7 +169,7 @@ func (p *Client) Close() (err error) {
 	return nil
 }
 
-func (p *Client) Send(em primitive.EncodedMessage) (err error) {
+func (p *Client) Send(em protocol.EncodedMessage) (err error) {
 
 	p.Lock()
 
@@ -190,7 +189,7 @@ func (p *Client) Send(em primitive.EncodedMessage) (err error) {
 	return nil
 }
 
-func (p *Client) SendWith(em primitive.EncodedMessage, cb primitive.Callback) (err error) {
+func (p *Client) SendWith(em protocol.EncodedMessage, cb protocol.Callback) (err error) {
 
 	p.Lock()
 
@@ -215,10 +214,10 @@ func NewClient(peerInfo *peer.PeerInfo) (c *Client) {
 
 	var client = Client{
 		info:      peerInfo,
-		inbound:   make(chan primitive.EncodedMessage, 128),
-		outbound:  make(chan primitive.EncodedMessage, 128),
-		callbacks: make(chan primitive.Callback, 128),
-		handlers:  make(map[primitive.MessageType]primitive.Callback),
+		inbound:   make(chan protocol.EncodedMessage, 128),
+		outbound:  make(chan protocol.EncodedMessage, 128),
+		callbacks: make(chan protocol.Callback, 128),
+		handlers:  make(map[protocol.MessageType]protocol.Callback),
 	}
 
 	return &client

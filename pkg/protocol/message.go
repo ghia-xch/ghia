@@ -1,8 +1,8 @@
-package primitive
+package protocol
 
 var (
-	NullType    = MessageType(0)
-	NullId   Id = Id(0)
+	NullMessageType    = MessageType(0)
+	NullId          Id = Id(0)
 )
 
 type MessageType uint8

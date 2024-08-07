@@ -1,12 +1,12 @@
 package node
 
 import (
-	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
+	"github.com/ghia-xch/ghia/pkg/protocol"
 )
 
 type Type uint8
 
-func (t Type) Encode(enc *primitive.MessageEncoder) (em primitive.EncodedMessage, err error) {
+func (t Type) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
 	return enc.Encode(uint8(t))
 }
 

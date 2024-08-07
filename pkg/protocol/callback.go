@@ -1,4 +1,4 @@
-package primitive
+package protocol
 
 type Callback func(em EncodedMessage) (err error)
 

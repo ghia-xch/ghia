@@ -6,7 +6,6 @@ import (
 	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
 	"github.com/ghia-xch/ghia/pkg/protocol/network"
-	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 	"github.com/gorilla/websocket"
 )
 
@@ -30,7 +29,7 @@ type Handshake struct {
 	Capabilities    capability2.Set
 }
 
-func (h *Handshake) Encode(enc *primitive.MessageEncoder) (em primitive.EncodedMessage, err error) {
+func (h *Handshake) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
 
 	if em, err = enc.Encode(
 		h.NetworkId,
@@ -46,7 +45,7 @@ func (h *Handshake) Encode(enc *primitive.MessageEncoder) (em primitive.EncodedM
 	return enc.Bytes(), nil
 }
 
-func (h *Handshake) Decode(dec *primitive.MessageDecoder, em primitive.EncodedMessage) (err error) {
+func (h *Handshake) Decode(dec *protocol.MessageDecoder, em protocol.EncodedMessage) (err error) {
 
 	dec.Reset(em)
 
@@ -93,9 +92,9 @@ func (h *Handshake) Decode(dec *primitive.MessageDecoder, em primitive.EncodedMe
 	return nil
 }
 
-func PerformHandshake(conn *websocket.Conn, enc *primitive.MessageEncoder, h1 *Handshake) (h2 *Handshake, err error) {
+func PerformHandshake(conn *websocket.Conn, enc *protocol.MessageEncoder, h1 *Handshake) (h2 *Handshake, err error) {
 
-	var em primitive.EncodedMessage
+	var em protocol.EncodedMessage
 
 	enc.Reset(protocol.HandshakeType, nil)
 
@@ -113,7 +112,7 @@ func PerformHandshake(conn *websocket.Conn, enc *primitive.MessageEncoder, h1 *H
 
 	h2 = MakeHandshake()
 
-	if err = h2.Decode(primitive.NewMessageDecoder(), em); err != nil {
+	if err = h2.Decode(protocol.NewMessageDecoder(), em); err != nil {
 		return
 	}
 

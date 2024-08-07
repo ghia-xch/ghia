@@ -7,7 +7,6 @@ import (
 	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/ghia-xch/ghia/pkg/protocol"
-	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"time"
@@ -27,9 +26,9 @@ var crawlCommand = &cobra.Command{
 		client = node.NewClient(peer.NewPeerInfo("203.184.53.208", 8444))
 
 		client.Handle(
-			primitive.MessageHandler{
+			protocol.MessageHandler{
 				Type: protocol.NewPeak,
-				Callback: func(em primitive.EncodedMessage) (err error) {
+				Callback: func(em protocol.EncodedMessage) (err error) {
 
 					l.Infoln("New Peak found!")
 
