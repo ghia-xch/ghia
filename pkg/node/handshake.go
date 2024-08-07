@@ -2,10 +2,10 @@ package node
 
 import (
 	"github.com/ghia-xch/ghia/pkg"
+	"github.com/ghia-xch/ghia/pkg/network"
 	capability2 "github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
-	"github.com/ghia-xch/ghia/pkg/protocol/network"
 	"github.com/gorilla/websocket"
 )
 
