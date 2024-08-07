@@ -5,10 +5,14 @@ import (
 	"time"
 )
 
-type TimestamptedPeerInfo struct {
+type PeerInfo struct {
 	Host string
 	Port uint16
-	Ts   uint64
+}
+
+type TimestamptedPeerInfo struct {
+	PeerInfo
+	Ts uint64
 }
 
 func (r *TimestamptedPeerInfo) Timestamp() time.Time {
@@ -34,4 +38,11 @@ func (r *TimestamptedPeerInfo) Decode(dec *primitive.MessageDecoder, em primitiv
 	}
 
 	return nil
+}
+
+func NewPeerInfo(host string, port uint16) *PeerInfo {
+	return &PeerInfo{
+		Host: host,
+		Port: port,
+	}
 }

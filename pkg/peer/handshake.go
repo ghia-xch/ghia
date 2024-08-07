@@ -1,9 +1,10 @@
-package protocol
+package peer
 
 import (
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/node"
 	capability2 "github.com/ghia-xch/ghia/pkg/node/capability"
+	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/ghia-xch/ghia/pkg/protocol/full_node"
 	"github.com/ghia-xch/ghia/pkg/protocol/network"
 	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
@@ -97,7 +98,7 @@ func PerformHandshake(conn *websocket.Conn, enc *primitive.MessageEncoder, h1 *H
 
 	var em primitive.EncodedMessage
 
-	enc.Reset(HandshakeType, nil)
+	enc.Reset(protocol.HandshakeType, nil)
 
 	if em, err = h1.Encode(enc); err != nil {
 		return nil, err
