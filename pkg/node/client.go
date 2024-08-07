@@ -3,6 +3,7 @@ package node
 import (
 	"context"
 	"errors"
+	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/gorilla/websocket"
@@ -208,6 +209,10 @@ func (p *Client) SendWith(em protocol.EncodedMessage, cb protocol.Callback) (err
 	}
 
 	return nil
+}
+
+func (c *Client) IsCapableOf(cap capability.Capability) bool {
+	return c.handshake.Capabilities.IsEnabled(cap)
 }
 
 func NewClient(peerInfo *peer.PeerInfo) (c *Client) {

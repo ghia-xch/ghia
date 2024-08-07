@@ -5,6 +5,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/node"
+	"github.com/ghia-xch/ghia/pkg/node/capability"
 	protocol2 "github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/spf13/cobra"
@@ -43,6 +44,8 @@ var crawlCommand = &cobra.Command{
 			l.Fatalln(err)
 			return
 		}
+
+		spew.Dump(client.IsCapableOf(capability.Base))
 
 		//client.SendWith()
 
