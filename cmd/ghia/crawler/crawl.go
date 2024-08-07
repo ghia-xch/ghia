@@ -26,9 +26,9 @@ var crawlCommand = &cobra.Command{
 		client = node.NewClient(peer.NewPeerInfo("203.184.53.208", 8444))
 
 		client.Handle(
-			protocol.MessageHandler{
-				Type: protocol.NewPeak,
-				Callback: func(em protocol.EncodedMessage) (err error) {
+			protocol.Handler(
+				protocol.NewPeak,
+				func(em protocol.EncodedMessage) (err error) {
 
 					l.Infoln("New Peak found!")
 
@@ -36,7 +36,7 @@ var crawlCommand = &cobra.Command{
 
 					return err
 				},
-			},
+			),
 		)
 
 		if err = client.Open(context.Background(), 10*time.Second); err != nil {

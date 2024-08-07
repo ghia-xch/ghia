@@ -5,8 +5,8 @@ type MessageHandler struct {
 	Callback Callback
 }
 
-func Handler(t MessageType, callback Callback) *MessageHandler {
-	return &MessageHandler{
+func Handler(t MessageType, callback Callback) MessageHandler {
+	return MessageHandler{
 		Type:     t,
 		Callback: callback,
 	}
