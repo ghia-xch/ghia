@@ -142,8 +142,10 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 	return nil
 }
 
-func (c *Client) Handle(messageType primitive.MessageType, cb primitive.Callback) {
-	c.handlers[messageType] = cb
+func (c *Client) Handle(handlers ...primitive.MessageHandler) {
+	for _, handler := range handlers {
+		c.handlers[handler.Type] = handler.Callback
+	}
 }
 
 func (p *Client) Close() (err error) {
