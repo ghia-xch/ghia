@@ -122,6 +122,7 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 			}
 
 		case <-interrupt:
+
 			l.Println("interrupt")
 
 			// Cleanly close the connection by sending a close message and then
