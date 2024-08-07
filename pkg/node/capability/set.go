@@ -1,7 +1,7 @@
 package capability
 
 import (
-	"github.com/ghia-xch/ghia/pkg/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
 )
 
 var DefaultSet = map[Capability]string{

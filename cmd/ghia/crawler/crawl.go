@@ -5,8 +5,8 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/node"
+	protocol2 "github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/peer"
-	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"time"
@@ -26,9 +26,9 @@ var crawlCommand = &cobra.Command{
 		client = node.NewClient(peer.NewPeerInfo("203.184.53.208", 8444))
 
 		client.Handle(
-			protocol.Handler(
-				protocol.NewPeak,
-				func(em protocol.EncodedMessage) (err error) {
+			protocol2.Handler(
+				protocol2.NewPeak,
+				func(em protocol2.EncodedMessage) (err error) {
 
 					l.Infoln("New Peak found!")
 

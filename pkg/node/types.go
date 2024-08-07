@@ -1,7 +1,7 @@
 package node
 
 import (
-	"github.com/ghia-xch/ghia/pkg/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
 )
 
 type Type uint8

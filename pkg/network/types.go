@@ -2,7 +2,7 @@ package network
 
 import (
 	"errors"
-	"github.com/ghia-xch/ghia/pkg/protocol/primitive"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/primitive"
 )
 
 var (

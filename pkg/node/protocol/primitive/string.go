@@ -1,6 +1,8 @@
 package primitive
 
-import "github.com/ghia-xch/ghia/pkg/protocol"
+import (
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
+)
 
 type String struct{ *string }
 

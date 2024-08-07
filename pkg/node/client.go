@@ -3,8 +3,8 @@ package node
 import (
 	"context"
 	"errors"
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/peer"
-	"github.com/ghia-xch/ghia/pkg/protocol"
 	"github.com/gorilla/websocket"
 	"net/url"
 	"os"
