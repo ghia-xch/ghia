@@ -3,15 +3,16 @@ package full_node
 import (
 	"encoding/binary"
 	protocol2 "github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/primitive"
 	"math/big"
 )
 
 type NewPeak struct {
-	HeaderHash                [32]byte
+	HeaderHash                primitive.Hash
 	Height                    uint32
 	Weight                    big.Int
 	ForkPointWithPreviousPeak uint32
-	UnfinishedRewardBlockHash [32]byte
+	UnfinishedRewardBlockHash primitive.Hash
 }
 
 type NewTransaction struct {
