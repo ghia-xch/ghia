@@ -160,6 +160,8 @@ func (c *Client) Close() (err error) {
 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
 	)
 
+	c.isClosed <- true
+
 	if err != nil {
 		return
 	}
@@ -224,6 +226,7 @@ func NewClient(peerInfo *peer.PeerInfo) (c *Client) {
 		outbound:  make(chan protocol.EncodedMessage, 128),
 		callbacks: make(chan protocol.Callback, 128),
 		handlers:  make(map[protocol.MessageType]protocol.Callback),
+		isClosed:  make(chan bool, 1),
 	}
 
 	return &client
