@@ -63,14 +63,15 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 	go func() {
 
-		var mt int
 		var err error
 		var msg []byte
 
 		for {
 
-			if mt, msg, err = c.conn.ReadMessage(); err != nil {
-				if mt == -1 {
+			if _, msg, err = c.conn.ReadMessage(); err != nil {
+
+				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+					l.Errorln("read error: %v", err)
 					return
 				}
 
