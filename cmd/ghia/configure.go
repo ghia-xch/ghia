@@ -11,6 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"io"
 	"os"
 	"strings"
 )
@@ -154,7 +155,9 @@ func initLogging() {
 		cobra.CheckErr(err)
 	}
 
-	log.SetOutput(file)
+	multi := io.MultiWriter(file, os.Stdout)
+
+	log.SetOutput(multi)
 }
 
 func initData() {

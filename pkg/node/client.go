@@ -132,6 +132,8 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 				if err = c.Close(); err != nil {
 					l.Errorln("close:", err)
 				}
+
+				return
 			}
 		}
 	}()
