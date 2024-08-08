@@ -49,6 +49,10 @@ var crawlCommand = &cobra.Command{
 
 		//client.SendWith()
 
+		select {
+		case <-client.IsClosed():
+		}
+
 		l.Println("-- fin --")
 	},
 }

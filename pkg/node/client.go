@@ -24,6 +24,8 @@ type Client struct {
 	outbound  chan protocol.EncodedMessage
 	callbacks chan protocol.Callback
 	handlers  map[protocol.MessageType]protocol.Callback
+
+	isClosed chan bool
 }
 
 func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
@@ -125,19 +127,11 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 			case <-interrupt:
 
-				l.Println("interrupt")
+				l.Println("interrupt, closing websocket")
 
-				// Cleanly close the connection by sending a close message and then
-				// waiting (with timeout) for the server to close the connection.
-				err = c.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-				if err != nil {
-					l.Println("write close:", err)
-					return
+				if err = c.Close(); err != nil {
+					l.Errorln("close:", err)
 				}
-				select {
-				case <-time.After(time.Second):
-				}
-				return
 			}
 		}
 	}()
@@ -171,6 +165,10 @@ func (c *Client) Close() (err error) {
 	}
 
 	return nil
+}
+
+func (c *Client) IsClosed() chan bool {
+	return c.isClosed
 }
 
 func (c *Client) Send(em protocol.EncodedMessage) (err error) {
