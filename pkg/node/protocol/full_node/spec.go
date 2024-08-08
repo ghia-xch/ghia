@@ -2,7 +2,7 @@ package full_node
 
 import (
 	"encoding/binary"
-	protocol2 "github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/primitive"
 	"lukechampine.com/uint128"
 )
@@ -58,7 +58,7 @@ type RejectBlock struct {
 // 	IncludeTransactionBlock bool
 //}
 
-var RequestBlocksType protocol2.MessageType = 29
+var RequestBlocksType protocol.MessageType = 29
 
 type RequestBlocks [10]byte
 
@@ -76,7 +76,7 @@ func RequestBlocksMessage(start uint32, end uint32, includeTxBlock bool) (r Requ
 	return
 }
 
-func (r RequestBlocks) Encode() (em protocol2.EncodedMessage, err error) {
+func (r RequestBlocks) Encode() (em protocol.EncodedMessage, err error) {
 	return r[:], nil
 }
 
@@ -89,7 +89,7 @@ func (r RequestBlocks) Encode() (em protocol2.EncodedMessage, err error) {
 	r = em[0:10]
 }*/
 
-var RespondBlocksType protocol2.MessageType = 38
+var RespondBlocksType protocol.MessageType = 38
 
 type FullBlock struct{}
 
