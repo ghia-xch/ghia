@@ -26,19 +26,19 @@ type Client struct {
 	handlers  map[protocol.MessageType]protocol.Callback
 }
 
-func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
+func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
-	p.Lock()
+	c.Lock()
 
-	defer p.Unlock()
+	defer c.Unlock()
 
-	if p.conn != nil {
+	if c.conn != nil {
 		return nil
 	}
 
 	var u = url.URL{
 		Scheme: "wss",
-		Host:   p.info.Host + ":" + strconv.Itoa(int(p.info.Port)),
+		Host:   c.info.Host + ":" + strconv.Itoa(int(c.info.Port)),
 		Path:   "/ws",
 	}
 
@@ -47,13 +47,13 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 	websocket.DefaultDialer.TLSClientConfig = DefaultTLSConfig
 	websocket.DefaultDialer.HandshakeTimeout = timeout
 
-	if p.conn, _, err = websocket.DefaultDialer.DialContext(ctx, u.String(), nil); err != nil {
+	if c.conn, _, err = websocket.DefaultDialer.DialContext(ctx, u.String(), nil); err != nil {
 		return err
 	}
 
 	l.Infoln("performing handshake...")
 
-	if p.handshake, err = PerformHandshake(p.conn, protocol.NewMessageEncoder(1024), DefaultHandshake); err != nil {
+	if c.handshake, err = PerformHandshake(c.conn, protocol.NewMessageEncoder(1024), DefaultHandshake); err != nil {
 		return err
 	}
 
@@ -67,7 +67,7 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 		for {
 
-			if mt, msg, err = p.conn.ReadMessage(); err != nil {
+			if mt, msg, err = c.conn.ReadMessage(); err != nil {
 				if mt == -1 {
 					return
 				}
@@ -75,7 +75,7 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 				continue
 			}
 
-			p.inbound <- msg
+			c.inbound <- msg
 		}
 	}()
 
@@ -87,13 +87,13 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 		for {
 
-			msg = <-p.inbound
+			msg = <-c.inbound
 
 			l.Infoln("received message: ", msg)
 
 			if protocol.HasNoExpectedResponse(msg.Type()) {
 
-				if cb, ok = p.handlers[msg.Type()]; !ok {
+				if cb, ok = c.handlers[msg.Type()]; !ok {
 					continue
 				}
 
@@ -104,40 +104,43 @@ func (p *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 		}
 	}()
 
-	interrupt := make(chan os.Signal, 1)
+	go func() {
 
-	signal.Notify(interrupt, os.Interrupt)
+		interrupt := make(chan os.Signal, 1)
 
-	ticker := time.NewTicker(10 * time.Second)
+		signal.Notify(interrupt, os.Interrupt)
 
-	defer ticker.Stop()
+		ticker := time.NewTicker(10 * time.Second)
 
-	for {
-		select {
-		case <-ticker.C:
+		defer ticker.Stop()
 
-			if err = p.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				l.Println("write:", err)
-				return
-			}
-
-		case <-interrupt:
-
-			l.Println("interrupt")
-
-			// Cleanly close the connection by sending a close message and then
-			// waiting (with timeout) for the server to close the connection.
-			err = p.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				l.Println("write close:", err)
-				return
-			}
+		for {
 			select {
-			case <-time.After(time.Second):
+			case <-ticker.C:
+
+				if err = c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+					l.Println("write:", err)
+					return
+				}
+
+			case <-interrupt:
+
+				l.Println("interrupt")
+
+				// Cleanly close the connection by sending a close message and then
+				// waiting (with timeout) for the server to close the connection.
+				err = c.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+				if err != nil {
+					l.Println("write close:", err)
+					return
+				}
+				select {
+				case <-time.After(time.Second):
+				}
+				return
 			}
-			return
 		}
-	}
+	}()
 
 	return nil
 }
@@ -148,17 +151,17 @@ func (c *Client) Handle(handlers ...protocol.MessageHandler) {
 	}
 }
 
-func (p *Client) Close() (err error) {
+func (c *Client) Close() (err error) {
 
-	p.Lock()
+	c.Lock()
 
-	defer p.Unlock()
+	defer c.Unlock()
 
-	if p.conn == nil {
+	if c.conn == nil {
 		return nil
 	}
 
-	err = p.conn.WriteMessage(
+	err = c.conn.WriteMessage(
 		websocket.CloseMessage,
 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
 	)
@@ -170,18 +173,18 @@ func (p *Client) Close() (err error) {
 	return nil
 }
 
-func (p *Client) Send(em protocol.EncodedMessage) (err error) {
+func (c *Client) Send(em protocol.EncodedMessage) (err error) {
 
-	p.Lock()
+	c.Lock()
 
-	defer p.Unlock()
+	defer c.Unlock()
 
 	if !protocol.HasNoExpectedResponse(em.Type()) {
 		return errors.New("message has an expected response.")
 	}
 
 	select {
-	case p.outbound <- em:
+	case c.outbound <- em:
 		return nil
 	default:
 		return errors.New("peer outbound is full.")
@@ -190,19 +193,19 @@ func (p *Client) Send(em protocol.EncodedMessage) (err error) {
 	return nil
 }
 
-func (p *Client) SendWith(em protocol.EncodedMessage, cb protocol.Callback) (err error) {
+func (c *Client) SendWith(em protocol.EncodedMessage, cb protocol.Callback) (err error) {
 
-	p.Lock()
+	c.Lock()
 
-	defer p.Unlock()
+	defer c.Unlock()
 
 	if !protocol.HasExpectedResponse(em.Type()) {
 		return errors.New("message has no expected response.")
 	}
 
 	select {
-	case p.outbound <- em:
-		p.callbacks <- cb
+	case c.outbound <- em:
+		c.callbacks <- cb
 		return nil
 	default:
 		return errors.New("peer outbound is full.")
