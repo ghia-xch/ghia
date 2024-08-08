@@ -92,7 +92,7 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 			msg = <-c.inbound
 
-			l.Infoln("received message: ", msg)
+			l.Info("received message[", msg.Type(), "] ", protocol.TypeAsString(msg.Type()))
 
 			if protocol.HasNoExpectedResponse(msg.Type()) {
 

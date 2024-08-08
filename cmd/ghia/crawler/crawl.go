@@ -31,9 +31,7 @@ var crawlCommand = &cobra.Command{
 				protocol.NewPeak,
 				func(em protocol.EncodedMessage) (err error) {
 
-					l.Infoln("New Peak found!")
-
-					spew.Dump(em)
+					l.Infoln("new peak found.")
 
 					return err
 				},

@@ -205,3 +205,68 @@ func IsValidResponse(sent MessageType, recv MessageType) (isValid bool) {
 
 	return false
 }
+
+func TypeAsString(mt MessageType) string {
+
+	switch mt {
+	case NullType:
+		return "null"
+	case HandshakeType:
+		return "handshake"
+	case Error:
+		return "error"
+	case NewPeak:
+		return "new peak"
+	case NewTransaction:
+		return "new transaction"
+	case RequestTransaction:
+		return "request transaction"
+	case RespondTransaction:
+		return "respond transaction"
+	case RequestProofOfWeight:
+		return "request proof of weight"
+	case RespondProofOfWeight:
+		return "respond proof of weight"
+	case RequestBlock:
+		return "request block"
+	case RespondBlock:
+		return "respond block"
+	case RejectBlock:
+		return "reject block"
+	case RequestBlocks:
+		return "request blocks"
+	case RespondBlocks:
+		return "respond blocks"
+	case RejectBlocks:
+		return "reject blocks"
+	case NewUnfinishedBlock:
+		return "new unfinished block"
+	case RequestUnfinishedBlock:
+		return "request unfinished block"
+	case RespondUnfinishedBlock:
+		return "respond unfinished block"
+	case NewSignagePointOrEndOfSubSlot:
+		return "new signage point or end of sub slot"
+	case RequestSignagePointOrEndOfSubSlot:
+		return "request signage point or end of sub slot"
+	case RespondSignagePoint:
+		return "respond signage point"
+	case RespondEndOfSubSlot:
+		return "respond end of sub slot"
+	case RequestMempoolTransactions:
+		return "request mempool transactions"
+	case RequestCompactVDF:
+		return "request compact vdf"
+	case RespondCompactVDF:
+		return "respond compact vdf"
+	case NewCompactVDF:
+		return "new compact vdf"
+	case RequestPeers:
+		return "request peers"
+	case RespondPeers:
+		return "respond peers"
+
+	default:
+		return "unknown"
+	}
+}
