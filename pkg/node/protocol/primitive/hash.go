@@ -19,7 +19,7 @@ func (h *Hash) Decode(dec *protocol.MessageDecoder) (err error) {
 
 	var hash []byte
 
-	if hash, err = dec.ParseBytes(); err != nil {
+	if hash, err = dec.ParseBytes(32); err != nil {
 		return
 	}
 

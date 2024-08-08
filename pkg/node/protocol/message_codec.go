@@ -235,6 +235,10 @@ func (md *MessageDecoder) Reset(em EncodedMessage) (err error) {
 	return md.parseHeader()
 }
 
+func (md *MessageDecoder) Bytes() []byte {
+	return md.em
+}
+
 func (md *MessageDecoder) Type() MessageType {
 	return md.msgType
 }
@@ -337,21 +341,15 @@ func (md *MessageDecoder) ParseString() (value string, err error) {
 	return
 }
 
-func (md *MessageDecoder) ParseBytes() (value []byte, err error) {
+func (md *MessageDecoder) ParseBytes(blen int) (value []byte, err error) {
 
-	var bLen uint32
-
-	if bLen, err = md.ParseUint32(); err != nil {
-		return nil, err
-	}
-
-	if uint32(len(md.em[md.pos:])) < bLen {
+	if len(md.em[md.pos:]) < blen {
 		return nil, MessageAttributeNotDecodableError
 	}
 
-	value = md.em[md.pos : md.pos+bLen]
+	value = md.em[md.pos : md.pos+uint32(blen)]
 
-	md.pos += bLen
+	md.pos += uint32(blen)
 
 	return
 }

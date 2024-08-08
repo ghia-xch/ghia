@@ -88,6 +88,8 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 		var cb protocol.Callback
 		var ok bool
 
+		var msgDecoder = protocol.NewMessageDecoder()
+
 		for {
 
 			msg = <-c.inbound
@@ -100,7 +102,11 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 					continue
 				}
 
-				if err = cb(msg); err != nil {
+				if err = msgDecoder.Reset(msg); err != nil {
+					l.Errorln("failed to decode message: %v", err)
+				}
+
+				if err = cb(msgDecoder); err != nil {
 					l.Errorf("failed to handle message: %v", err)
 				}
 			}

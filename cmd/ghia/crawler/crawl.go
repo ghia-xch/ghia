@@ -7,6 +7,8 @@ import (
 	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/full_node"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/primitive"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,9 +31,28 @@ var crawlCommand = &cobra.Command{
 		client.Handle(
 			protocol.Handler(
 				protocol.NewPeak,
-				func(em protocol.EncodedMessage) (err error) {
+				func(dec *protocol.MessageDecoder) (err error) {
 
-					l.Infoln("new peak found.")
+					var newPeak full_node.NewPeak
+
+					var b []byte
+
+					if b, err = dec.ParseBytes(32); err != nil {
+						return err
+					}
+
+					var height uint32
+
+					if height, err = dec.ParseUint32(); err != nil {
+						return err
+					}
+
+					newPeak.HeaderHash = primitive.Hash(b[:])
+					newPeak.Height = height
+
+					//spew.Dump(newPeak)
+
+					l.Info("new peak found: ", newPeak.Height, " [", newPeak.HeaderHash.String(), "]")
 
 					return err
 				},
