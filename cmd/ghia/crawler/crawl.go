@@ -12,6 +12,8 @@ import (
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
+	"os/signal"
 	"time"
 )
 
@@ -68,8 +70,29 @@ var crawlCommand = &cobra.Command{
 
 		//client.SendWith()
 
-		select {
-		case <-client.IsClosed():
+		interrupt := make(chan os.Signal, 1)
+
+		signal.Notify(interrupt, os.Interrupt)
+
+	CLOSER:
+		for {
+
+			select {
+
+			case <-interrupt:
+
+				l.Println("interrupt, closing websocket")
+
+				if err = client.Close(); err != nil {
+					l.Errorln("close:", err)
+				}
+
+			case <-client.IsClosed():
+
+				l.Println("connection to peer closed")
+
+				break CLOSER
+			}
 		}
 
 		l.Println("-- fin --")

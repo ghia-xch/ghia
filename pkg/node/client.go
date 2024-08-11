@@ -8,8 +8,6 @@ import (
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/gorilla/websocket"
 	"net/url"
-	"os"
-	"os/signal"
 	"strconv"
 	"sync"
 	"time"
@@ -17,15 +15,20 @@ import (
 
 type Client struct {
 	sync.Mutex
-	info      *peer.PeerInfo
+
+	info *peer.PeerInfo
+
 	conn      *websocket.Conn
 	handshake *Handshake
-	inbound   chan protocol.EncodedMessage
-	outbound  chan protocol.EncodedMessage
+
+	inbound  chan protocol.EncodedMessage
+	outbound chan protocol.EncodedMessage
+
 	callbacks chan protocol.Callback
 	handlers  map[protocol.MessageType]protocol.Callback
 
-	isClosed chan bool
+	isClosing chan bool
+	isClosed  chan bool
 }
 
 func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
@@ -44,7 +47,7 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 		Path:   "/ws",
 	}
 
-	l.Info("opening socket to peer: ", u.String())
+	l.WithField("peer", u.String()).Info("connection to peer, opening")
 
 	websocket.DefaultDialer.TLSClientConfig = DefaultTLSConfig
 	websocket.DefaultDialer.HandshakeTimeout = timeout
@@ -53,92 +56,52 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 		return err
 	}
 
-	l.Infoln("performing handshake...")
-
-	if c.handshake, err = PerformHandshake(c.conn, protocol.NewMessageEncoder(1024), DefaultHandshake); err != nil {
+	if c.handshake, err = performHandshake(c.conn, protocol.NewMessageEncoder(128), DefaultHandshake); err != nil {
 		return err
 	}
 
-	l.Infoln("handshake succeeded")
+	l.Infoln("handshake successful, connection established.")
+
+	go c.inboundQueuing()
+	go c.outboundQueuing()
 
 	go func() {
 
-		var err error
-		var msg []byte
-
-		for {
-
-			if _, msg, err = c.conn.ReadMessage(); err != nil {
-
-				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-					l.Errorln("read error: %v", err)
-					return
-				}
-
-				continue
-			}
-
-			c.inbound <- msg
-		}
-	}()
-
-	go func() {
-
-		var msg protocol.EncodedMessage
-		var cb protocol.Callback
+		var em protocol.EncodedMessage
 		var ok bool
 
-		var msgDecoder = protocol.NewMessageDecoder()
+		var dec = protocol.NewMessageDecoder()
 
 		for {
 
-			msg = <-c.inbound
+			select {
+			case em, ok = <-c.inbound:
 
-			l.Info("received message[", msg.Type(), "] ", protocol.TypeAsString(msg.Type()))
-
-			if protocol.HasNoExpectedResponse(msg.Type()) {
-
-				if cb, ok = c.handlers[msg.Type()]; !ok {
+				if !ok {
 					continue
 				}
 
-				if err = msgDecoder.Reset(msg); err != nil {
-					l.Errorln("failed to decode message: %v", err)
+				l.Info("received message[", em.Type(), "] ", protocol.TypeAsString(em.Type()))
+
+				if err = c.handleInboundMessage(dec, em); err != nil {
+					l.Errorf("error handling inbound message: %v", err)
 				}
 
-				if err = cb(msgDecoder); err != nil {
-					l.Errorf("failed to handle message: %v", err)
-				}
-			}
-		}
-	}()
+			case <-c.isClosing:
 
-	go func() {
+				l.Infoln("closing inbound/outbound message queue")
 
-		interrupt := make(chan os.Signal, 1)
-
-		signal.Notify(interrupt, os.Interrupt)
-
-		ticker := time.NewTicker(10 * time.Second)
-
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ticker.C:
-
-				if err = c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-					l.Println("write:", err)
-					return
+				if err = c.drainInboundQueue(dec); err != nil {
+					l.Errorf("error closing inbound message queue: %v", err)
 				}
 
-			case <-interrupt:
-
-				l.Println("interrupt, closing websocket")
-
-				if err = c.Close(); err != nil {
-					l.Errorln("close:", err)
+				if err = c.drainOutboundQueue(); err != nil {
+					l.Errorf("error closing outbound message queue: %v", err)
 				}
+
+				l.Infoln("closed inbound/outbound message queue")
+
+				c.isClosed <- true
 
 				return
 			}
@@ -148,10 +111,135 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 	return nil
 }
 
+func (c *Client) inboundQueuing() {
+
+	l.Infoln("starting inbound queuing")
+
+	var err error
+	var em []byte
+
+	for {
+
+		if _, em, err = c.conn.ReadMessage(); err != nil {
+
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+
+				l.Errorln("error reading from connection: %v", err)
+
+				c.isClosing <- true
+
+				return
+			}
+
+			continue
+		}
+
+		c.inbound <- em
+	}
+}
+
+func (c *Client) outboundQueuing() {
+
+	l.Infoln("starting outbound queuing")
+
+	var err error
+	var em protocol.EncodedMessage
+	var ok bool
+
+	ticker := time.NewTicker(10 * time.Second)
+
+	defer ticker.Stop()
+
+	for {
+		select {
+		case em, ok = <-c.outbound:
+
+			if !ok {
+				continue
+			}
+
+			if err = c.conn.WriteMessage(websocket.BinaryMessage, em); err != nil {
+				l.Errorln("error writing to connection: %v", err)
+			}
+
+		case <-ticker.C:
+
+			l.Infoln("sending ping")
+
+			if err = c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				l.Println("write:", err)
+				return
+			}
+
+			ticker.Reset(10 * time.Second)
+		}
+	}
+}
+
+func (c *Client) handleInboundMessage(dec *protocol.MessageDecoder, em protocol.EncodedMessage) (err error) {
+
+	var ok bool
+	var cb protocol.Callback
+
+	if protocol.HasNoExpectedResponse(em.Type()) {
+
+		if cb, ok = c.handlers[em.Type()]; !ok {
+			return
+		}
+
+		if err = dec.Reset(em); err != nil {
+			return
+		}
+
+		if err = cb(dec); err != nil {
+			return
+		}
+
+		return nil
+	}
+
+	// Look for callback and exec
+	return nil
+}
+
+func (c *Client) drainInboundQueue(dec *protocol.MessageDecoder) (err error) {
+
+	var inboundLen int
+
+	inboundLen = len(c.inbound)
+
+	for i := 0; i < inboundLen; i++ {
+		if err = c.handleInboundMessage(dec, <-c.inbound); err != nil {
+			return
+		}
+	}
+
+	return nil
+}
+
+func (c *Client) drainOutboundQueue() (err error) {
+
+	var outboundLen int
+
+	outboundLen = len(c.outbound)
+
+	for i := 0; i < outboundLen; i++ {
+		if err = c.conn.WriteMessage(websocket.BinaryMessage, <-c.outbound); err != nil {
+			l.Errorln("error writing to connection: %v", err)
+		}
+	}
+
+	return nil
+}
+
 func (c *Client) Handle(handlers ...protocol.MessageHandler) {
 	for _, handler := range handlers {
 		c.handlers[handler.Type] = handler.Callback
 	}
+}
+
+func (c *Client) IsClosed() chan bool {
+	return c.isClosed
 }
 
 func (c *Client) Close() (err error) {
@@ -169,17 +257,11 @@ func (c *Client) Close() (err error) {
 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
 	)
 
-	c.isClosed <- true
-
 	if err != nil {
 		return
 	}
 
 	return nil
-}
-
-func (c *Client) IsClosed() chan bool {
-	return c.isClosed
 }
 
 func (c *Client) Send(em protocol.EncodedMessage) (err error) {
@@ -227,14 +309,23 @@ func (c *Client) IsCapableOf(cap capability.Capability) bool {
 	return c.handshake.Capabilities.IsEnabled(cap)
 }
 
+var (
+	MaxQueuedInboundMessages  = 128
+	MaxQueuedOutboundMessages = 128
+)
+
 func NewClient(peerInfo *peer.PeerInfo) (c *Client) {
 
 	var client = Client{
-		info:      peerInfo,
-		inbound:   make(chan protocol.EncodedMessage, 128),
-		outbound:  make(chan protocol.EncodedMessage, 128),
-		callbacks: make(chan protocol.Callback, 128),
+		info: peerInfo,
+
+		inbound:  make(chan protocol.EncodedMessage, MaxQueuedInboundMessages),
+		outbound: make(chan protocol.EncodedMessage, MaxQueuedOutboundMessages),
+
+		callbacks: make(chan protocol.Callback, MaxQueuedOutboundMessages),
 		handlers:  make(map[protocol.MessageType]protocol.Callback),
+
+		isClosing: make(chan bool, 1),
 		isClosed:  make(chan bool, 1),
 	}
 

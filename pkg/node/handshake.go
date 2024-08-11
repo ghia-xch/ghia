@@ -92,7 +92,7 @@ func (h *Handshake) Decode(dec *protocol.MessageDecoder, em protocol.EncodedMess
 	return nil
 }
 
-func PerformHandshake(conn *websocket.Conn, enc *protocol.MessageEncoder, h1 *Handshake) (h2 *Handshake, err error) {
+func performHandshake(conn *websocket.Conn, enc *protocol.MessageEncoder, h1 *Handshake) (h2 *Handshake, err error) {
 
 	var em protocol.EncodedMessage
 
