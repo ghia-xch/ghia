@@ -16,13 +16,13 @@ type NewPeak struct {
 }
 
 type NewTransaction struct {
-	TransactionId [32]byte
+	TransactionId primitive.Hash
 	Cost          uint64
 	Fees          uint64
 }
 
 type RequestTransaction struct {
-	TransactionId [32]byte
+	TransactionId primitive.Hash
 }
 
 type SpendBundle struct{}
@@ -42,6 +42,8 @@ type RespondProofOfWeight struct {
 	WeightProof WeightProof
 	Tip         [32]byte
 }
+
+////
 
 type RequestBlock struct {
 	Height                  uint32
