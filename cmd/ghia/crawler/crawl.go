@@ -89,7 +89,7 @@ var crawlCommand = &cobra.Command{
 
 			case <-client.IsClosed():
 
-				l.Println("connection to peer closed")
+				l.Println("connection closed")
 
 				break CLOSER
 			}

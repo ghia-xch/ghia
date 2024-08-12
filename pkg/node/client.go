@@ -81,17 +81,17 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 			case <-c.isClosing:
 
-				l.Infoln("closing inbound/outbound message queue")
+				l.Infoln("closing inbound queuing")
 
 				if err = c.drainInboundQueue(dec); err != nil {
 					l.Errorf("error closing inbound message queue: %v", err)
 				}
 
+				l.Infoln("closing outbound queuing")
+
 				if err = c.drainOutboundQueue(); err != nil {
 					l.Errorf("error closing outbound message queue: %v", err)
 				}
-
-				l.Infoln("closed inbound/outbound message queue")
 
 				c.isClosed <- true
 
