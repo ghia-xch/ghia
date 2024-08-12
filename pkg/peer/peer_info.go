@@ -2,12 +2,22 @@ package peer
 
 import (
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"net/url"
+	"strconv"
 	"time"
 )
 
 type PeerInfo struct {
 	Host string
 	Port uint16
+}
+
+func (pi *PeerInfo) Url() *url.URL {
+	return &url.URL{
+		Scheme: "wss",
+		Host:   pi.Host + ":" + strconv.Itoa(int(pi.Port)),
+		Path:   "/ws",
+	}
 }
 
 type TimestamptedPeerInfo struct {

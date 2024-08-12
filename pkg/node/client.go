@@ -7,8 +7,6 @@ import (
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/gorilla/websocket"
-	"net/url"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -41,18 +39,12 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 		return nil
 	}
 
-	var u = url.URL{
-		Scheme: "wss",
-		Host:   c.info.Host + ":" + strconv.Itoa(int(c.info.Port)),
-		Path:   "/ws",
-	}
-
-	l.WithField("peer", u.String()).Info("connection to peer, opening")
+	l.WithField("peer", c.info.Url()).Info("connection to peer, opening")
 
 	websocket.DefaultDialer.TLSClientConfig = DefaultTLSConfig
 	websocket.DefaultDialer.HandshakeTimeout = timeout
 
-	if c.conn, _, err = websocket.DefaultDialer.DialContext(ctx, u.String(), nil); err != nil {
+	if c.conn, _, err = websocket.DefaultDialer.DialContext(ctx, c.info.Url().String(), nil); err != nil {
 		return err
 	}
 
@@ -138,6 +130,8 @@ func (c *Client) inboundQueuing() {
 	}
 }
 
+const PingInterval = 60 * time.Second
+
 func (c *Client) outboundQueuing() {
 
 	l.Infoln("starting outbound queuing")
@@ -146,7 +140,7 @@ func (c *Client) outboundQueuing() {
 	var em protocol.EncodedMessage
 	var ok bool
 
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(PingInterval)
 
 	defer ticker.Stop()
 
