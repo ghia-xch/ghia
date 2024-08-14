@@ -2,7 +2,6 @@ package full_node
 
 import (
 	"encoding/binary"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"lukechampine.com/uint128"
 )
@@ -27,8 +26,6 @@ func (n *NewPeak) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessa
 
 func (n *NewPeak) Decode(dec *protocol.MessageDecoder) (err error) {
 
-	spew.Dump(dec.Bytes())
-
 	if n.HeaderHash, err = dec.ParseHash(); err != nil {
 		return
 	}
@@ -45,13 +42,9 @@ func (n *NewPeak) Decode(dec *protocol.MessageDecoder) (err error) {
 		return
 	}
 
-	spew.Dump(n.Weight.String())
-
 	if n.UnfinishedRewardBlockHash, err = dec.ParseHash(); err != nil {
 		return
 	}
-
-	spew.Dump(n)
 
 	return
 }
@@ -62,15 +55,72 @@ type NewTransaction struct {
 	Fees          uint64
 }
 
+func (n *NewTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+	return enc.Encode(
+		n.TransactionId,
+		n.Cost,
+		n.Fees,
+	)
+}
+
+func (n *NewTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
+
+	if n.TransactionId, err = dec.ParseHash(); err != nil {
+		return
+	}
+
+	if n.Cost, err = dec.ParseUint64(); err != nil {
+		return
+	}
+
+	if n.Fees, err = dec.ParseUint64(); err != nil {
+		return
+	}
+
+	return
+}
+
 type RequestTransaction struct {
 	TransactionId protocol.Hash
 }
 
-type SpendBundle struct{}
-
-type RespondTransaction struct {
-	Transaction SpendBundle
+func (n *RequestTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+	return enc.Encode(
+		n.TransactionId,
+	)
 }
+
+func (n *RequestTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
+
+	if n.TransactionId, err = dec.ParseHash(); err != nil {
+		return
+	}
+
+	return nil
+}
+
+//type CoinSpend struct {
+//}
+//
+//type SpendBundle struct{
+//	CoinSpends []CoinSpend
+//	AggSignature []byte
+//}
+//
+//type RespondTransaction struct {
+//	Transaction SpendBundle
+//}
+//
+//func (n *RespondTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+//	return enc.Encode(
+//		n.Transaction,
+//	)
+//}
+//
+//func (n *RespondTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
+//
+//	if n.Transaction.
+//}
 
 type RequestProofOfWeight struct {
 	TotalNumberOfBlocks uint32

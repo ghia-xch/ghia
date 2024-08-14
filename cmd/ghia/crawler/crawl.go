@@ -41,10 +41,28 @@ var crawlCommand = &cobra.Command{
 					}
 
 					l.Info("new peak found: ", newPeak.Height, " [", newPeak.HeaderHash.String(), "] ")
-					l.Info("weight:", newPeak.Weight.String(), " fork:", newPeak.ForkPointWithPreviousPeak)
-					l.Info("unfinished block hash: ", newPeak.UnfinishedRewardBlockHash.String())
+					l.Info("-- weight:", newPeak.Weight.String())
+					l.Info("-- fork:", newPeak.ForkPointWithPreviousPeak)
+					l.Info("-- unfinished block hash: ", newPeak.UnfinishedRewardBlockHash.String())
 
 					return err
+				},
+			),
+			protocol.Handler(
+				protocol.NewTransaction,
+				func(dec *protocol.MessageDecoder) (err error) {
+
+					var newTransaction full_node.NewTransaction
+
+					if err = newTransaction.Decode(dec); err != nil {
+						return err
+					}
+
+					l.Info("new transaction found: [", newTransaction.TransactionId.String(), "]")
+					l.Info("-- cost: ", newTransaction.Cost)
+					l.Info("-- fees: ", newTransaction.Fees)
+
+					return nil
 				},
 			),
 		)
