@@ -71,6 +71,12 @@ func (m *MessageEncoder) Encode(attrs ...any) (em EncodedMessage, err error) {
 
 		switch a := attr.(type) {
 
+		case Encodable:
+
+			if em, err = a.Encode(m); err != nil {
+				return
+			}
+
 		case nil:
 
 			m.raw[m.pos] = 0
@@ -140,11 +146,13 @@ func (m *MessageEncoder) Encode(attrs ...any) (em EncodedMessage, err error) {
 
 			m.pos += len(a)
 
-		case Encodable:
+		case Hash:
 
-			if em, err = a.Encode(m); err != nil {
-				return
-			}
+			buf = m.raw[m.pos : m.pos+32]
+
+			copy(buf, a.Bytes())
+
+			m.pos += 32
 
 		default:
 			return nil, MessageAttributeNotEncodableError

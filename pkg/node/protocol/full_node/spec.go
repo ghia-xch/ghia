@@ -84,7 +84,14 @@ type RequestTransaction struct {
 	TransactionId protocol.Hash
 }
 
+func NewRequestTransaction(transactionId protocol.Hash) *RequestTransaction {
+	return &RequestTransaction{TransactionId: transactionId}
+}
+
 func (n *RequestTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+
+	enc.Reset(protocol.RequestTransaction, nil)
+
 	return enc.Encode(
 		n.TransactionId,
 	)

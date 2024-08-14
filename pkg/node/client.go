@@ -181,16 +181,22 @@ func (c *Client) handleInboundMessage(dec *protocol.MessageDecoder, em protocol.
 			return
 		}
 
-		if err = dec.Reset(em); err != nil {
-			return
-		}
+	} else {
 
-		if err = cb(dec); err != nil {
-			return
+		if cb, ok = <-c.callbacks; !ok {
+			return err
 		}
-
-		return nil
 	}
+
+	if err = dec.Reset(em); err != nil {
+		return
+	}
+
+	if err = cb(dec); err != nil {
+		return
+	}
+
+	return nil
 
 	// Look for callback and exec
 	return nil
@@ -285,7 +291,7 @@ func (c *Client) SendWith(em protocol.EncodedMessage, cb protocol.Callback) (err
 	defer c.Unlock()
 
 	if !protocol.HasExpectedResponse(em.Type()) {
-		return errors.New("message has no expected response.")
+		return errors.New("sending, message has no expected response: " + protocol.TypeAsString(em.Type()))
 	}
 
 	select {

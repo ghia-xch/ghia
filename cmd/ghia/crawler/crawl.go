@@ -62,6 +62,26 @@ var crawlCommand = &cobra.Command{
 					l.Info("-- cost: ", newTransaction.Cost)
 					l.Info("-- fees: ", newTransaction.Fees)
 
+					var tx protocol.EncodedMessage
+					var enc = protocol.NewMessageEncoder(1024)
+
+					if tx, err = full_node.NewRequestTransaction(newTransaction.TransactionId).Encode(enc); err != nil {
+						return
+					}
+
+					l.Info("requesting transaction: [", newTransaction.TransactionId.String(), "]")
+
+					var cb = func(dec *protocol.MessageDecoder) (err error) {
+
+						spew.Dump(dec.Bytes())
+
+						return err
+					}
+
+					if err = client.SendWith(tx, cb); err != nil {
+						return err
+					}
+
 					return nil
 				},
 			),
