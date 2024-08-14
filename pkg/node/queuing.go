@@ -64,7 +64,7 @@ func (c *Client) outboundQueuing() {
 			l.Infoln("sending ping")
 
 			if err = c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				l.Println("write:", err)
+				l.Errorln("error writing ping to connection: %v", err)
 				return
 			}
 
