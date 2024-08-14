@@ -112,7 +112,7 @@ func (c *Client) outboundQueuing() {
 				return
 			}
 
-			ticker.Reset(10 * time.Second)
+			ticker.Reset(PingInterval)
 		}
 	}
 }
