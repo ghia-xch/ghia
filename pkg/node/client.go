@@ -104,6 +104,11 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 }
 
 func (c *Client) Handle(handlers ...protocol.MessageHandler) {
+
+	c.Lock()
+
+	defer c.Unlock()
+
 	for _, handler := range handlers {
 		c.handlers[handler.Type] = handler.Callback
 	}
