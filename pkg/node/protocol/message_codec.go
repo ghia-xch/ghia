@@ -304,7 +304,7 @@ func (md *MessageDecoder) ParseUint64() (value uint64, err error) {
 
 	value = binary.BigEndian.Uint64(md.em[md.pos:])
 
-	md.pos += Uint32Len
+	md.pos += Uint64Len
 
 	return
 }
@@ -341,15 +341,34 @@ func (md *MessageDecoder) ParseString() (value string, err error) {
 	return
 }
 
-func (md *MessageDecoder) ParseBytes(blen int) (value []byte, err error) {
+func (md *MessageDecoder) ParseBytes() (value []byte, err error) {
 
-	if len(md.em[md.pos:]) < blen {
+	var valLen uint32
+
+	if valLen, err = md.ParseUint32(); err != nil {
+		return nil, err
+	}
+
+	if len(md.em[md.pos:]) < int(valLen) {
 		return nil, MessageAttributeNotDecodableError
 	}
 
-	value = md.em[md.pos : md.pos+uint32(blen)]
+	value = md.em[md.pos : md.pos+valLen]
 
-	md.pos += uint32(blen)
+	md.pos += valLen
+
+	return
+}
+
+func (md *MessageDecoder) ParseHash() (value Hash, err error) {
+
+	if len(md.em[md.pos:]) < 32 {
+		return Hash([]byte{}), MessageAttributeNotDecodableError
+	}
+
+	value = Hash(md.em[md.pos : md.pos+32])
+
+	md.pos += 32
 
 	return
 }

@@ -2,27 +2,68 @@ package full_node
 
 import (
 	"encoding/binary"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
-	"github.com/ghia-xch/ghia/pkg/node/protocol/primitive"
 	"lukechampine.com/uint128"
 )
 
 type NewPeak struct {
-	HeaderHash                primitive.Hash
+	HeaderHash                protocol.Hash
 	Height                    uint32
 	Weight                    uint128.Uint128
 	ForkPointWithPreviousPeak uint32
-	UnfinishedRewardBlockHash primitive.Hash
+	UnfinishedRewardBlockHash protocol.Hash
+}
+
+func (n *NewPeak) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+	return enc.Encode(
+		n.HeaderHash,
+		n.Height,
+		n.Weight,
+		n.ForkPointWithPreviousPeak,
+		n.UnfinishedRewardBlockHash,
+	)
+}
+
+func (n *NewPeak) Decode(dec *protocol.MessageDecoder) (err error) {
+
+	spew.Dump(dec.Bytes())
+
+	if n.HeaderHash, err = dec.ParseHash(); err != nil {
+		return
+	}
+
+	if n.Height, err = dec.ParseUint32(); err != nil {
+		return
+	}
+
+	if n.Weight, err = dec.ParseUint128(); err != nil {
+		return
+	}
+
+	if n.ForkPointWithPreviousPeak, err = dec.ParseUint32(); err != nil {
+		return
+	}
+
+	spew.Dump(n.Weight.String())
+
+	if n.UnfinishedRewardBlockHash, err = dec.ParseHash(); err != nil {
+		return
+	}
+
+	spew.Dump(n)
+
+	return
 }
 
 type NewTransaction struct {
-	TransactionId primitive.Hash
+	TransactionId protocol.Hash
 	Cost          uint64
 	Fees          uint64
 }
 
 type RequestTransaction struct {
-	TransactionId primitive.Hash
+	TransactionId protocol.Hash
 }
 
 type SpendBundle struct{}

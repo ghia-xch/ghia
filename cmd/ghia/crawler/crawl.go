@@ -8,7 +8,6 @@ import (
 	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/full_node"
-	"github.com/ghia-xch/ghia/pkg/node/protocol/primitive"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -37,24 +36,13 @@ var crawlCommand = &cobra.Command{
 
 					var newPeak full_node.NewPeak
 
-					var b []byte
-
-					if b, err = dec.ParseBytes(32); err != nil {
+					if err = newPeak.Decode(dec); err != nil {
 						return err
 					}
 
-					var height uint32
-
-					if height, err = dec.ParseUint32(); err != nil {
-						return err
-					}
-
-					newPeak.HeaderHash = primitive.Hash(b[:])
-					newPeak.Height = height
-
-					//spew.Dump(newPeak)
-
-					l.Info("new peak found: ", newPeak.Height, " [", newPeak.HeaderHash.String(), "]")
+					l.Info("new peak found: ", newPeak.Height, " [", newPeak.HeaderHash.String(), "] ")
+					l.Info("weight:", newPeak.Weight.String(), " fork:", newPeak.ForkPointWithPreviousPeak)
+					l.Info("unfinished block hash: ", newPeak.UnfinishedRewardBlockHash.String())
 
 					return err
 				},
