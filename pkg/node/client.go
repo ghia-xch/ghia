@@ -141,32 +141,6 @@ func (c *Client) Handle(handlers ...protocol.MessageHandler) {
 	}
 }
 
-func (c *Client) IsClosed() chan bool {
-	return c.isClosed
-}
-
-func (c *Client) Close() (err error) {
-
-	c.Lock()
-
-	defer c.Unlock()
-
-	if c.conn == nil {
-		return nil
-	}
-
-	err = c.conn.WriteMessage(
-		websocket.CloseMessage,
-		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
-	)
-
-	if err != nil {
-		return
-	}
-
-	return nil
-}
-
 func (c *Client) Send(em protocol.EncodedMessage) (err error) {
 
 	c.Lock()
@@ -203,6 +177,32 @@ func (c *Client) SendWith(em protocol.EncodedMessage, cb protocol.Callback) (err
 		return nil
 	default:
 		return errors.New("peer outbound is full.")
+	}
+
+	return nil
+}
+
+func (c *Client) IsClosed() chan bool {
+	return c.isClosed
+}
+
+func (c *Client) Close() (err error) {
+
+	c.Lock()
+
+	defer c.Unlock()
+
+	if c.conn == nil {
+		return nil
+	}
+
+	err = c.conn.WriteMessage(
+		websocket.CloseMessage,
+		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
+	)
+
+	if err != nil {
+		return
 	}
 
 	return nil
