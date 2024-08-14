@@ -103,38 +103,6 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 	return nil
 }
 
-func (c *Client) handleInboundMessage(dec *protocol.MessageDecoder, em protocol.EncodedMessage) (err error) {
-
-	var ok bool
-	var cb protocol.Callback
-
-	if protocol.HasNoExpectedResponse(em.Type()) {
-
-		if cb, ok = c.handlers[em.Type()]; !ok {
-			return
-		}
-
-	} else {
-
-		if cb, ok = <-c.callbacks; !ok {
-			return err
-		}
-	}
-
-	if err = dec.Reset(em); err != nil {
-		return
-	}
-
-	if err = cb(dec); err != nil {
-		return
-	}
-
-	return nil
-
-	// Look for callback and exec
-	return nil
-}
-
 func (c *Client) Handle(handlers ...protocol.MessageHandler) {
 	for _, handler := range handlers {
 		c.handlers[handler.Type] = handler.Callback
