@@ -19,7 +19,7 @@ func (c *Client) handleInboundMessage(dec *protocol.MessageDecoder, em protocol.
 	var cb protocol.Callback
 
 	if cb = c.getMessageHandler(em); cb == nil {
-		return errors.New("inbound message handler not found")
+		return errors.New("handler for '" + protocol.TypeAsString(em.Type()) + "' not found")
 	}
 
 	if err = dec.Reset(em); err != nil {
