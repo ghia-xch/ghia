@@ -56,49 +56,7 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 
 	go c.inboundQueuing()
 	go c.outboundQueuing()
-
-	go func() {
-
-		var em protocol.EncodedMessage
-		var ok bool
-
-		var dec = protocol.NewMessageDecoder()
-
-		for {
-
-			select {
-			case em, ok = <-c.inbound:
-
-				if !ok {
-					continue
-				}
-
-				l.Info("received message[", em.Type(), "] ", protocol.TypeAsString(em.Type()))
-
-				if err = c.handleInboundMessage(dec, em); err != nil {
-					l.Errorf("error handling inbound message: %v", err)
-				}
-
-			case <-c.isClosing:
-
-				l.Infoln("closing inbound queuing")
-
-				if err = c.drainInboundQueue(dec); err != nil {
-					l.Errorf("error closing inbound message queue: %v", err)
-				}
-
-				l.Infoln("closing outbound queuing")
-
-				if err = c.drainOutboundQueue(); err != nil {
-					l.Errorf("error closing outbound message queue: %v", err)
-				}
-
-				c.isClosed <- true
-
-				return
-			}
-		}
-	}()
+	go c.handlerQueuing()
 
 	return nil
 }
