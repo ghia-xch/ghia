@@ -41,8 +41,8 @@ var crawlCommand = &cobra.Command{
 					}
 
 					l.Info("new peak found: ", newPeak.Height, " [", newPeak.HeaderHash.String(), "] ")
-					l.Info("-- weight:", newPeak.Weight.String())
-					l.Info("-- fork:", newPeak.ForkPointWithPreviousPeak)
+					l.Info("-- weight: ", newPeak.Weight.String())
+					l.Info("-- fork: ", newPeak.ForkPointWithPreviousPeak)
 					l.Info("-- unfinished block hash: ", newPeak.UnfinishedRewardBlockHash.String())
 
 					return err
