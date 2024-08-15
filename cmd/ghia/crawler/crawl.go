@@ -79,6 +79,15 @@ var crawlCommand = &cobra.Command{
 					return nil
 				},
 			),
+			protocol.Handler(
+				protocol.NewSignagePointOrEndOfSubSlot,
+				func(dec *protocol.MessageDecoder) (err error) {
+
+					spew.Dump(dec.Type())
+
+					return nil
+				},
+			),
 		)
 
 		if err = client.Open(context.Background(), 10*time.Second); err != nil {
