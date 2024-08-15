@@ -65,7 +65,7 @@ var crawlCommand = &cobra.Command{
 					var tx protocol.EncodedMessage
 					var enc = protocol.NewMessageEncoder(1024)
 
-					if tx, err = full_node.NewRequestTransaction(newTransaction.TransactionId).Encode(enc); err != nil {
+					if tx, err = full_node.CreateRequestTransaction(newTransaction.TransactionId).Encode(enc); err != nil {
 						return
 					}
 
@@ -93,8 +93,6 @@ var crawlCommand = &cobra.Command{
 		}
 
 		spew.Dump(client.IsCapableOf(capability.Base))
-
-		//client.SendWith()
 
 		interrupt := make(chan os.Signal, 1)
 

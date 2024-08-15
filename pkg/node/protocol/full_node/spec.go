@@ -84,10 +84,6 @@ type RequestTransaction struct {
 	TransactionId protocol.Hash
 }
 
-func NewRequestTransaction(transactionId protocol.Hash) *RequestTransaction {
-	return &RequestTransaction{TransactionId: transactionId}
-}
-
 func (n *RequestTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
 
 	enc.Reset(protocol.RequestTransaction, nil)
@@ -104,6 +100,10 @@ func (n *RequestTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
 	}
 
 	return nil
+}
+
+func CreateRequestTransaction(transactionId protocol.Hash) *RequestTransaction {
+	return &RequestTransaction{TransactionId: transactionId}
 }
 
 //type CoinSpend struct {
