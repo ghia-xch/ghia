@@ -68,7 +68,7 @@ var crawlCommand = &cobra.Command{
 						full_node.CreateRequestTransaction(newTransaction.TransactionId),
 						func(dec *protocol.MessageDecoder) (err error) {
 
-							spew.Dump(dec.Bytes())
+							spew.Dump(dec.Type())
 
 							return err
 						},
