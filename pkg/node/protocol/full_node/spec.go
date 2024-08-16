@@ -3,144 +3,7 @@ package full_node
 import (
 	"encoding/binary"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
-	"lukechampine.com/uint128"
 )
-
-type NewPeak struct {
-	HeaderHash                protocol.Hash
-	Height                    uint32
-	Weight                    uint128.Uint128
-	ForkPointWithPreviousPeak uint32
-	UnfinishedRewardBlockHash protocol.Hash
-}
-
-func (n *NewPeak) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
-	return enc.Encode(
-		n.HeaderHash,
-		n.Height,
-		n.Weight,
-		n.ForkPointWithPreviousPeak,
-		n.UnfinishedRewardBlockHash,
-	)
-}
-
-func (n *NewPeak) Decode(dec *protocol.MessageDecoder) (err error) {
-
-	if n.HeaderHash, err = dec.ParseHash(); err != nil {
-		return
-	}
-
-	if n.Height, err = dec.ParseUint32(); err != nil {
-		return
-	}
-
-	if n.Weight, err = dec.ParseUint128(); err != nil {
-		return
-	}
-
-	if n.ForkPointWithPreviousPeak, err = dec.ParseUint32(); err != nil {
-		return
-	}
-
-	if n.UnfinishedRewardBlockHash, err = dec.ParseHash(); err != nil {
-		return
-	}
-
-	return
-}
-
-type NewTransaction struct {
-	TransactionId protocol.Hash
-	Cost          uint64
-	Fees          uint64
-}
-
-func (n *NewTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
-	return enc.Encode(
-		n.TransactionId,
-		n.Cost,
-		n.Fees,
-	)
-}
-
-func (n *NewTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
-
-	if n.TransactionId, err = dec.ParseHash(); err != nil {
-		return
-	}
-
-	if n.Cost, err = dec.ParseUint64(); err != nil {
-		return
-	}
-
-	if n.Fees, err = dec.ParseUint64(); err != nil {
-		return
-	}
-
-	return
-}
-
-type RequestTransaction struct {
-	TransactionId protocol.Hash
-}
-
-func (n RequestTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
-
-	enc.Reset(protocol.RequestTransaction, nil)
-
-	return enc.Encode(
-		n.TransactionId,
-	)
-}
-
-func (n *RequestTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
-
-	if n.TransactionId, err = dec.ParseHash(); err != nil {
-		return
-	}
-
-	return nil
-}
-
-func CreateRequestTransaction(transactionId protocol.Hash) (em protocol.EncodedMessage) {
-	em, _ = RequestTransaction{TransactionId: transactionId}.Encode(protocol.NewMessageEncoder(38))
-	return
-}
-
-//type CoinSpend struct {
-//}
-//
-//type SpendBundle struct{
-//	CoinSpends []CoinSpend
-//	AggSignature []byte
-//}
-//
-//type RespondTransaction struct {
-//	Transaction SpendBundle
-//}
-//
-//func (n *RespondTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
-//	return enc.Encode(
-//		n.Transaction,
-//	)
-//}
-//
-//func (n *RespondTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
-//
-//	if n.Transaction.
-//}
-
-type RequestProofOfWeight struct {
-	TotalNumberOfBlocks uint32
-	Tip                 [32]byte
-}
-
-type WeightProof struct{}
-
-type RespondProofOfWeight struct {
-	WeightProof WeightProof
-	Tip         [32]byte
-}
 
 ////
 
@@ -253,6 +116,7 @@ type RespondBlocks struct {
 //unfinished_block: UnfinishedBlock
 //
 //
+
 //@streamable
 //@dataclass(frozen=True)
 //class NewSignagePointOrEndOfSubSlot(Streamable):
@@ -286,6 +150,7 @@ type RespondBlocks struct {
 //end_of_slot_bundle: EndOfSubSlotBundle
 //
 //
+
 //@streamable
 //@dataclass(frozen=True)
 //class RequestMempoolTransactions(Streamable):
