@@ -27,7 +27,7 @@ var crawlCommand = &cobra.Command{
 		var err error
 		var client *node.Client
 
-		client = node.NewClient(peer.NewPeerInfo("178.13.0.176", 8444))
+		client = node.NewClient(peer.NewPeerInfo("146.199.123.30", 8444))
 
 		client.Handle(
 			protocol.Handler(

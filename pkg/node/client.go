@@ -132,6 +132,8 @@ func (c *Client) Close() (err error) {
 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
 	)
 
+	c.isClosing <- true
+
 	if err != nil {
 		return
 	}

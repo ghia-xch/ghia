@@ -65,16 +65,12 @@ func (c *Client) inboundQueuing() {
 
 				l.Errorln("error reading from connection: %v", err)
 
-				c.isClosing <- true
-
 				return
 			}
 
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
 
 				l.Infoln("reading close from connection: %v", err)
-
-				c.isClosing <- true
 
 				return
 			}
