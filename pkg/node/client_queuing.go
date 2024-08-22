@@ -70,6 +70,15 @@ func (c *Client) inboundQueuing() {
 				return
 			}
 
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+
+				l.Infoln("reading close from connection: %v", err)
+
+				c.isClosing <- true
+
+				return
+			}
+
 			continue
 		}
 
@@ -99,8 +108,11 @@ func (c *Client) outboundQueuing() {
 				continue
 			}
 
+			l.Infoln(protocol.TypeAsString(em.Type()))
+
 			if err = c.conn.WriteMessage(websocket.BinaryMessage, em); err != nil {
 				l.Errorln("error writing to connection: %v", err)
+				return
 			}
 
 		case <-ticker.C:
@@ -108,7 +120,7 @@ func (c *Client) outboundQueuing() {
 			l.Infoln("pinging connection")
 
 			if err = c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				l.Errorln("error writing ping to connection: %v", err)
+				l.Errorln("error pinging connection: %v", err)
 				return
 			}
 

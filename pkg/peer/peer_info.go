@@ -33,7 +33,7 @@ func (r *TimestamptedPeerInfo) Encode(enc *protocol.MessageEncoder) (em protocol
 	return enc.Encode(r.Host, r.Port, r.Ts)
 }
 
-func (r *TimestamptedPeerInfo) Decode(dec *protocol.MessageDecoder, em protocol.EncodedMessage) (err error) {
+func (r *TimestamptedPeerInfo) Decode(dec *protocol.MessageDecoder) (err error) {
 
 	if r.Host, err = dec.ParseString(); err != nil {
 		return err

@@ -27,7 +27,7 @@ var crawlCommand = &cobra.Command{
 		var err error
 		var client *node.Client
 
-		client = node.NewClient(peer.NewPeerInfo("203.184.53.208", 8444))
+		client = node.NewClient(peer.NewPeerInfo("178.13.0.176", 8444))
 
 		client.Handle(
 			protocol.Handler(
@@ -96,6 +96,29 @@ var crawlCommand = &cobra.Command{
 		}
 
 		spew.Dump(client.IsCapableOf(capability.Base))
+
+		if err = client.SendWith(
+			full_node.CreateRequestPeers(),
+			func(dec *protocol.MessageDecoder) (err error) {
+
+				l.Infoln("lol")
+
+				var rp full_node.RespondPeers
+
+				if err = rp.Decode(dec); err != nil {
+
+					l.Fatalln(err)
+
+					return err
+				}
+
+				spew.Dump(rp)
+
+				return nil
+			},
+		); err != nil {
+			l.Fatalln(err)
+		}
 
 		interrupt := make(chan os.Signal, 1)
 
