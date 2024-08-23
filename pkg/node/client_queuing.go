@@ -103,6 +103,9 @@ func (c *Client) outboundQueuing() {
 		case em, ok = <-c.outbound:
 
 			if !ok {
+
+				l.Infoln("no message present on outbound queue. continuing.")
+
 				continue
 			}
 
