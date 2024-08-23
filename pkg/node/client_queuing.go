@@ -61,16 +61,18 @@ func (c *Client) inboundQueuing() {
 
 		if _, em, err = c.conn.ReadMessage(); err != nil {
 
+			l.Errorln("error reading from connection: %v", err)
+
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 
-				l.Errorln("error reading from connection: %v", err)
+				l.Errorln("unexpected close: %v", err)
 
 				return
 			}
 
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
 
-				l.Infoln("reading close from connection: %v", err)
+				l.Infoln("expected close: %v", err)
 
 				return
 			}
