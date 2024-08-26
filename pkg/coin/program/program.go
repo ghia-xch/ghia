@@ -1,3 +1,3 @@
-package coin
+package program
 
 type Program []byte

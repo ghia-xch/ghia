@@ -1,11 +1,14 @@
 package coin
 
-import bls12381 "github.com/kilic/bls12-381"
+import (
+	"github.com/ghia-xch/ghia/pkg/coin/program"
+	bls12381 "github.com/kilic/bls12-381"
+)
 
 type Spend struct {
 	Coin         *Coin
-	PuzzleReveal Program
-	Solution     Program
+	PuzzleReveal program.Program
+	Solution     program.Program
 }
 
 type SpendBundle struct {
@@ -18,14 +21,11 @@ func (sb *SpendBundle) Aggregate(sbs ...*SpendBundle) *SpendBundle {
 	var res SpendBundle
 
 	var das = bls12381.NewG2()
-	var aggSig = das.New()
 
 	for _, sb := range sbs {
 		res.Spends = append(res.Spends, sb.Spends...)
-		aggSig = bls12381.NewG2().Add(das.New(), aggSig, sb.AggregateSignature)
+		res.AggregateSignature = bls12381.NewG2().Add(das.New(), res.AggregateSignature, sb.AggregateSignature)
 	}
-
-	res.AggregateSignature = aggSig
 
 	return &res
 }
