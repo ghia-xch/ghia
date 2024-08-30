@@ -8,9 +8,17 @@ type NewTransaction struct {
 	Fees          uint64
 }
 
+func (n *NewTransaction) Id() *protocol.Id {
+	return nil
+}
+
+func (n *NewTransaction) Type() protocol.MessageType {
+	return protocol.NewTransaction
+}
+
 func (n *NewTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
 
-	enc.Reset(protocol.NewPeak, nil)
+	enc.Reset(protocol.NewTransaction, nil)
 
 	return enc.Encode(
 		n.TransactionId,
@@ -40,28 +48,36 @@ type RequestTransaction struct {
 	TransactionId protocol.Hash
 }
 
-func (n RequestTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
-
-	enc.Reset(protocol.RequestTransaction, nil)
-
-	return enc.Encode(
-		n.TransactionId,
-	)
-}
-
-func (n *RequestTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
-
-	if n.TransactionId, err = dec.ParseHash(); err != nil {
-		return
-	}
-
+func (r *RequestTransaction) Id() *protocol.Id {
 	return nil
 }
 
-func CreateRequestTransaction(transactionId protocol.Hash) (em protocol.EncodedMessage) {
-	em, _ = RequestTransaction{TransactionId: transactionId}.Encode(protocol.NewMessageEncoder(38))
-	return
+func (r *RequestTransaction) Type() protocol.MessageType {
+	return protocol.RequestTransaction
 }
+
+//func (n RequestTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+//
+//	enc.Reset(protocol.RequestTransaction, nil)
+//
+//	return enc.Encode(
+//		n.TransactionId,
+//	)
+//}
+//
+//func (n *RequestTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
+//
+//	if n.TransactionId, err = dec.ParseHash(); err != nil {
+//		return
+//	}
+//
+//	return nil
+//}
+//
+//func CreateRequestTransaction(transactionId protocol.Hash) (em protocol.EncodedMessage) {
+//	em, _ = RequestTransaction{TransactionId: transactionId}.Encode(protocol.NewMessageEncoder(38))
+//	return
+//}
 
 //type CoinSpend struct {
 //}

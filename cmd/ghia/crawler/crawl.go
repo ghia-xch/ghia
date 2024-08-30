@@ -2,11 +2,8 @@ package crawler
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
-	"github.com/ghia-xch/ghia/pkg/coin"
 	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
@@ -67,17 +64,25 @@ var crawlCommand = &cobra.Command{
 
 					l.Info("requesting transaction: [", newTransaction.TransactionId.String(), "]")
 
-					if err = client.SendWith(
-						full_node.CreateRequestTransaction(newTransaction.TransactionId),
-						func(dec *protocol.MessageDecoder) (err error) {
-
-							spew.Dump(dec.Type())
-
-							return err
+					spew.Dump(protocol.Encode(
+						&full_node.RequestTransaction{
+							TransactionId: newTransaction.TransactionId,
 						},
-					); err != nil {
-						return err
-					}
+					))
+
+					spew.Dump(protocol.Encode(&newTransaction))
+
+					//if err = client.SendWith(
+					//	full_node.CreateRequestTransaction(newTransaction.TransactionId),
+					//	func(dec *protocol.MessageDecoder) (err error) {
+					//
+					//		spew.Dump(dec.Type())
+					//
+					//		return err
+					//	},
+					//); err != nil {
+					//	return err
+					//}
 
 					return nil
 				},
@@ -107,18 +112,18 @@ var crawlCommand = &cobra.Command{
 
 		// 0x2511ac63199f675412ec2db94f8b89802950f358c9ab4b7b86003f8c7dd7ea38
 
-		h2 := sha256.New()
-		h2.Write([]byte("fdgsdbbgfbggf"))
-		r2 := make([]byte, 32)
-		r2 = h2.Sum(nil)
+		//h2 := sha256.New()
+		//h2.Write([]byte("fdgsdbbgfbggf"))
+		//r2 := make([]byte, 32)
+		//r2 = h2.Sum(nil)
+		//
+		//r3, _ := hex.DecodeString("16069bd1d0c581e0014f48aa828209a8a351d7dd069999766714fefdfc07fe95")
+		//
+		//spew.Dump(r3)
 
-		r3, _ := hex.DecodeString("16069bd1d0c581e0014f48aa828209a8a351d7dd069999766714fefdfc07fe95")
-
-		spew.Dump(r3)
-
-		c := coin.NewCoin(protocol.Hash(r3), protocol.Hash(r2), 1)
-
-		spew.Dump(c.Id())
+		//c := coin.NewCoin(protocol.Hash(r3), protocol.Hash(r2), 1)
+		//
+		//spew.Dump(c.Id())
 
 		//if err = client.SendWith(
 		//	full_node.CreateRequestPeers(),
