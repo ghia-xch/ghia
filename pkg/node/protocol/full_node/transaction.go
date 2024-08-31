@@ -8,10 +8,6 @@ type NewTransaction struct {
 	Fees          uint64
 }
 
-func (n *NewTransaction) Id() *protocol.Id {
-	return nil
-}
-
 func (n *NewTransaction) Type() protocol.MessageType {
 	return protocol.NewTransaction
 }
@@ -46,10 +42,6 @@ func (n *NewTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
 
 type RequestTransaction struct {
 	TransactionId protocol.Hash
-}
-
-func (r *RequestTransaction) Id() *protocol.Id {
-	return nil
 }
 
 func (r *RequestTransaction) Type() protocol.MessageType {

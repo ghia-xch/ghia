@@ -29,6 +29,10 @@ type Handshake struct {
 	Capabilities    capability.Set
 }
 
+func (h *Handshake) Type() protocol.MessageType {
+	return protocol.HandshakeType
+}
+
 func (h *Handshake) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
 
 	if em, err = enc.Encode(

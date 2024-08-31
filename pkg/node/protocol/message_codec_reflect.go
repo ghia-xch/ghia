@@ -7,22 +7,20 @@ import (
 	"reflect"
 )
 
-type Encodable2 interface {
-	Id() *Id
+type Codeable interface {
 	Type() MessageType
 }
 
 const DefaultEncodableSize = 8192
 
-func Encode(in Encodable2) (em EncodedMessage, err error) {
+func Encode(in Codeable) (em EncodedMessage, err error) {
 
 	b := make([]byte, 7, DefaultEncodableSize)
 
 	b[0] = byte(in.Type())
 
-	if in.Id() != nil {
-		binary.BigEndian.PutUint16(b[1:3], uint16(*in.Id()))
-	}
+	// We should add future support for setting an id here.
+	// At this time no message types support them.
 
 	inType := reflect.ValueOf(in)
 
@@ -52,6 +50,10 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 		f := in.Field(i)
 
 		switch f.Kind() {
+
+		case reflect.Slice:
+
+			//
 
 		case reflect.Struct:
 
@@ -98,4 +100,22 @@ func encodeElem(in any, b []byte) ([]byte, error) {
 	}
 
 	return nil, errors.New("invalid element type")
+}
+
+func Decode(in Codeable, em EncodedMessage) error {
+
+	inType := reflect.ValueOf(in)
+
+	if inType.Kind() != reflect.Ptr {
+		return errors.New("expected pointer to struct")
+	}
+
+	if MessageType(em[0]) != in.Type() {
+		return errors.New("message types to not match")
+	}
+
+	// We should add future support for setting an id here.
+	// At this time no message types support them.
+
+	return nil
 }

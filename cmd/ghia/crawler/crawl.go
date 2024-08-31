@@ -72,6 +72,8 @@ var crawlCommand = &cobra.Command{
 
 					spew.Dump(protocol.Encode(&newTransaction))
 
+					spew.Dump(protocol.Encode(node.DefaultHandshake))
+
 					//if err = client.SendWith(
 					//	full_node.CreateRequestTransaction(newTransaction.TransactionId),
 					//	func(dec *protocol.MessageDecoder) (err error) {

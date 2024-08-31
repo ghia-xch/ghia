@@ -7,6 +7,17 @@ import (
 
 type EncodedMessage []byte
 
+func (em EncodedMessage) Id() *Id {
+
+	id := Id(binary.BigEndian.Uint16(em[1:2]))
+
+	return &id
+}
+
+func (em EncodedMessage) SetId(id Id) {
+	binary.BigEndian.PutUint16(em[1:2], uint16(id))
+}
+
 func (em EncodedMessage) Type() MessageType {
 
 	if len(em) == 0 {
