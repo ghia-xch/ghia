@@ -111,10 +111,10 @@ func encodeElem(in any, b []byte) ([]byte, error) {
 	case bool:
 
 		if v {
-			return []byte{1}, nil
+			return append(b, byte(1)), nil
 		}
 
-		return []byte{0}, nil
+		return append(b, byte(0)), nil
 
 	case uint8:
 		return append(b, v), nil
