@@ -14,6 +14,11 @@ type encodeTestCase struct {
 }
 
 type sampleSubStruct struct {
+	A uint16
+	b uint16
+	c uint64
+	//D bool
+	//E string
 }
 
 type sampleStruct struct {
@@ -23,29 +28,40 @@ type sampleStruct struct {
 	D uint32
 	E *uint32
 	f *uint64
+	g sampleSubStruct
+	H sampleSubStruct
 }
 
 var (
-	valFalse         = false
-	valTrue          = true
-	valUint8Zero     = uint8(0)
-	valUint8Max      = uint8(math.MaxUint8)
-	valUint16Zero    = uint16(0)
-	valUint16Max     = uint16(math.MaxUint16)
-	valUint32Zero    = uint32(0)
-	valUint32Max     = uint32(math.MaxUint32)
-	valUint64Zero    = uint64(0)
-	valUint64Max     = uint64(math.MaxUint64)
-	valString        = "hello world"
-	valUint128Zero   = uint128.From64(0)
-	valUint128Max, _ = uint128.FromString("340282366920938463463374607431768211455")
-	valSampleStruct  = sampleStruct{
+	valFalse           = false
+	valTrue            = true
+	valUint8Zero       = uint8(0)
+	valUint8Max        = uint8(math.MaxUint8)
+	valUint16Zero      = uint16(0)
+	valUint16Max       = uint16(math.MaxUint16)
+	valUint32Zero      = uint32(0)
+	valUint32Max       = uint32(math.MaxUint32)
+	valUint64Zero      = uint64(0)
+	valUint64Max       = uint64(math.MaxUint64)
+	valString          = "hello world"
+	valUint128Zero     = uint128.From64(0)
+	valUint128Max, _   = uint128.FromString("340282366920938463463374607431768211455")
+	valSampleSubStruct = sampleSubStruct{
+		A: valUint16Zero,
+		b: valUint16Max,
+		c: valUint64Max,
+		//D: valFalse,
+		//E: valString,
+	}
+	valSampleStruct = sampleStruct{
 		true, // unexported field should be ignored
 		true,
 		valUint32Max, // unexported field should be ignored
 		valUint32Max,
 		&valUint32Max,
 		&valUint64Zero, // unexported field should be ignored
+		valSampleSubStruct,
+		valSampleSubStruct,
 	}
 )
 
@@ -171,8 +187,12 @@ var encodeTestCases = []encodeTestCase{
 		value: reflect.ValueOf(valSampleStruct),
 		expected: []byte{
 			1,                  // true
-			255, 255, 255, 255, // 4294967295
-			255, 255, 255, 255, // dereferenced pointer to 4294967295
+			255, 255, 255, 255, // uint32 4294967295
+			255, 255, 255, 255, // dereferenced pointer to uint32 4294967295
+			0, 0, // uint16 0
+			//0,           //false
+			//0, 0, 0, 11, // length 11
+			//104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100,
 		},
 	},
 }
