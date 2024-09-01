@@ -32,13 +32,13 @@ var (
 	valUint32Max     = uint32(math.MaxUint32)
 	valUint64Zero    = uint64(0)
 	valUint64Max     = uint64(math.MaxUint64)
+	valString        = "hello world"
 	valUint128Zero   = uint128.From64(0)
 	valUint128Max, _ = uint128.FromString("340282366920938463463374607431768211455")
-	valString        = "hello world"
 	valSampleStruct  = sampleStruct{
+		true, // unexported field should be ignored
 		true,
-		true,
-		valUint32Max,
+		valUint32Max, // unexported field should be ignored
 		valUint32Max,
 		&valUint32Max,
 	}
