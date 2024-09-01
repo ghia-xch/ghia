@@ -1,19 +1,21 @@
-package protocol
+package codec
 
 import (
 	"encoding/binary"
 	"errors"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"lukechampine.com/uint128"
 	"reflect"
 )
 
 type Codeable interface {
-	Type() MessageType
+	Type() protocol.MessageType
 }
 
 const DefaultEncodableSize = 8192
 
-func Encode(in Codeable) (em EncodedMessage, err error) {
+func Encode(in Codeable) (em protocol.EncodedMessage, err error) {
 
 	b := make([]byte, 7, DefaultEncodableSize)
 
@@ -24,17 +26,36 @@ func Encode(in Codeable) (em EncodedMessage, err error) {
 
 	inType := reflect.ValueOf(in)
 
-	if inType.Kind() != reflect.Ptr {
-		return nil, errors.New("expected pointer to struct")
-	}
-
-	if b, err = encodeStruct(inType.Elem(), b); err != nil {
+	if b, err = encodeValue(inType, b); err != nil {
 		return nil, err
 	}
 
 	binary.BigEndian.PutUint32(b[3:7], uint32(len(b)))
 
 	return b, nil
+}
+
+func encodeValue(in reflect.Value, b []byte) ([]byte, error) {
+
+	if !in.IsValid() {
+		return []byte{0}, nil
+	}
+
+	switch in.Kind() {
+	case reflect.Struct:
+		return encodeStruct(in, b)
+	case reflect.Ptr:
+		return encodeValue(in.Elem(), b)
+	default:
+
+		if in.CanInterface() {
+			return encodeElem(in.Interface(), b)
+		}
+
+		return nil, errors.New("unsupported type")
+	}
+
+	return nil, nil
 }
 
 func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
@@ -49,6 +70,8 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 
 		f := in.Field(i)
 
+		spew.Dump(f.Kind())
+
 		switch f.Kind() {
 
 		case reflect.Slice:
@@ -57,7 +80,13 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 
 		case reflect.Struct:
 
-			if b, err = encodeStruct(f.Elem(), b); err != nil {
+			if b, err = encodeStruct(f, b); err != nil {
+				return nil, err
+			}
+
+		case reflect.Pointer:
+
+			if b, err = encodeValue(f.Elem(), b); err != nil {
 				return nil, err
 			}
 
@@ -78,6 +107,14 @@ func encodeElem(in any, b []byte) ([]byte, error) {
 	switch v := in.(type) {
 	case nil:
 		return append(b, byte(0)), nil
+	case bool:
+
+		if v {
+			return []byte{1}, nil
+		}
+
+		return []byte{0}, nil
+
 	case uint8:
 		return append(b, v), nil
 	case uint16:
@@ -92,7 +129,7 @@ func encodeElem(in any, b []byte) ([]byte, error) {
 	case string:
 		b = binary.BigEndian.AppendUint32(b, uint32(len(v)))
 		return append(b, []byte(v)...), nil
-	case Hash:
+	case protocol.Hash:
 		return append(b, v.Bytes()...), nil
 	case []byte:
 		b = binary.BigEndian.AppendUint32(b, uint32(len(v)))
@@ -102,7 +139,7 @@ func encodeElem(in any, b []byte) ([]byte, error) {
 	return nil, errors.New("invalid element type")
 }
 
-func Decode(in Codeable, em EncodedMessage) error {
+func Decode(in Codeable, em protocol.EncodedMessage) error {
 
 	inType := reflect.ValueOf(in)
 
@@ -110,7 +147,7 @@ func Decode(in Codeable, em EncodedMessage) error {
 		return errors.New("expected pointer to struct")
 	}
 
-	if MessageType(em[0]) != in.Type() {
+	if protocol.MessageType(em[0]) != in.Type() {
 		return errors.New("message types to not match")
 	}
 

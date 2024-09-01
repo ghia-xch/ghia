@@ -7,6 +7,7 @@ import (
 	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/codec"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/full_node"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/spf13/cobra"
@@ -64,15 +65,15 @@ var crawlCommand = &cobra.Command{
 
 					l.Info("requesting transaction: [", newTransaction.TransactionId.String(), "]")
 
-					spew.Dump(protocol.Encode(
+					spew.Dump(codec.Encode(
 						&full_node.RequestTransaction{
 							TransactionId: newTransaction.TransactionId,
 						},
 					))
 
-					spew.Dump(protocol.Encode(&newTransaction))
+					spew.Dump(codec.Encode(&newTransaction))
 
-					spew.Dump(protocol.Encode(node.DefaultHandshake))
+					spew.Dump(codec.Encode(node.DefaultHandshake))
 
 					//if err = client.SendWith(
 					//	full_node.CreateRequestTransaction(newTransaction.TransactionId),
