@@ -16,6 +16,9 @@ type encodeTestCase struct {
 type sampleStruct struct {
 	a bool
 	B bool
+	c uint32
+	D uint32
+	E *uint32
 }
 
 var (
@@ -35,6 +38,9 @@ var (
 	valSampleStruct  = sampleStruct{
 		true,
 		true,
+		valUint32Max,
+		valUint32Max,
+		&valUint32Max,
 	}
 )
 
@@ -137,7 +143,9 @@ var encodeTestCases = []encodeTestCase{
 			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
 		},
 	},
-	// structs
+
+	// here we start testing more complex types involving structs
+
 	encodeTestCase{
 		value:    reflect.ValueOf(valUint128Zero),
 		expected: []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -155,8 +163,12 @@ var encodeTestCases = []encodeTestCase{
 		expected: []byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255},
 	},
 	encodeTestCase{
-		value:    reflect.ValueOf(valSampleStruct),
-		expected: []byte{1},
+		value: reflect.ValueOf(valSampleStruct),
+		expected: []byte{
+			1,                  // true
+			255, 255, 255, 255, // 4294967295
+			255, 255, 255, 255, // dereferenced pointer to 4294967295
+		},
 	},
 }
 
