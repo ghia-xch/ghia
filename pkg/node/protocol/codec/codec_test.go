@@ -13,12 +13,16 @@ type encodeTestCase struct {
 	expected []byte
 }
 
+type sampleSubStruct struct {
+}
+
 type sampleStruct struct {
 	a bool
 	B bool
 	c uint32
 	D uint32
 	E *uint32
+	f *uint64
 }
 
 var (
@@ -41,6 +45,7 @@ var (
 		valUint32Max, // unexported field should be ignored
 		valUint32Max,
 		&valUint32Max,
+		&valUint64Zero, // unexported field should be ignored
 	}
 )
 
