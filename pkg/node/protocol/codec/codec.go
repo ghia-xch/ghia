@@ -3,7 +3,6 @@ package codec
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"lukechampine.com/uint128"
 	"reflect"
@@ -70,7 +69,9 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 
 		f := in.Field(i)
 
-		spew.Dump(f.Kind())
+		if !in.Type().Field(i).IsExported() {
+			continue
+		}
 
 		switch f.Kind() {
 
@@ -123,12 +124,12 @@ func encodeElem(in any, b []byte) ([]byte, error) {
 		return binary.BigEndian.AppendUint32(b, v), nil
 	case uint64:
 		return binary.BigEndian.AppendUint64(b, v), nil
-	case uint128.Uint128:
-		b = binary.BigEndian.AppendUint64(b, v.Hi)
-		return binary.BigEndian.AppendUint64(b, v.Lo), nil
 	case string:
 		b = binary.BigEndian.AppendUint32(b, uint32(len(v)))
 		return append(b, []byte(v)...), nil
+	case uint128.Uint128:
+		b = binary.BigEndian.AppendUint64(b, v.Hi)
+		return binary.BigEndian.AppendUint64(b, v.Lo), nil
 	case protocol.Hash:
 		return append(b, v.Bytes()...), nil
 	case []byte:

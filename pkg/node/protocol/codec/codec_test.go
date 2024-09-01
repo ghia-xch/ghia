@@ -13,6 +13,11 @@ type encodeTestCase struct {
 	expected []byte
 }
 
+type sampleStruct struct {
+	a bool
+	B bool
+}
+
 var (
 	valFalse         = false
 	valTrue          = true
@@ -27,6 +32,10 @@ var (
 	valUint128Zero   = uint128.From64(0)
 	valUint128Max, _ = uint128.FromString("340282366920938463463374607431768211455")
 	valString        = "hello world"
+	valSampleStruct  = sampleStruct{
+		true,
+		true,
+	}
 )
 
 var encodeTestCases = []encodeTestCase{
@@ -115,6 +124,21 @@ var encodeTestCases = []encodeTestCase{
 		expected: []byte{255, 255, 255, 255, 255, 255, 255, 255},
 	},
 	encodeTestCase{
+		value: reflect.ValueOf(valString),
+		expected: []byte{
+			0, 0, 0, 11, // length 11
+			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
+		},
+	},
+	encodeTestCase{
+		value: reflect.ValueOf(&valString),
+		expected: []byte{
+			0, 0, 0, 11, // length 11
+			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
+		},
+	},
+	// structs
+	encodeTestCase{
 		value:    reflect.ValueOf(valUint128Zero),
 		expected: []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	},
@@ -131,18 +155,8 @@ var encodeTestCases = []encodeTestCase{
 		expected: []byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255},
 	},
 	encodeTestCase{
-		value: reflect.ValueOf(valString),
-		expected: []byte{
-			0, 0, 0, 11, // length 11
-			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
-		},
-	},
-	encodeTestCase{
-		value: reflect.ValueOf(&valString),
-		expected: []byte{
-			0, 0, 0, 11, // length 11
-			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
-		},
+		value:    reflect.ValueOf(valSampleStruct),
+		expected: []byte{1},
 	},
 }
 
