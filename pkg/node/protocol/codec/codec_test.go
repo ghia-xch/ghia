@@ -17,7 +17,7 @@ type sampleSubStruct struct {
 	A uint16
 	b uint16
 	c uint64
-	//D bool
+	D bool
 	//E string
 }
 
@@ -50,7 +50,7 @@ var (
 		A: valUint16Zero,
 		b: valUint16Max,
 		c: valUint64Max,
-		//D: valFalse,
+		D: valFalse,
 		//E: valString,
 	}
 	valSampleStruct = sampleStruct{
@@ -190,7 +190,7 @@ var encodeTestCases = []encodeTestCase{
 			255, 255, 255, 255, // uint32 4294967295
 			255, 255, 255, 255, // dereferenced pointer to uint32 4294967295
 			0, 0, // uint16 0
-			//0,           //false
+			0, //false
 			//0, 0, 0, 11, // length 11
 			//104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100,
 		},
