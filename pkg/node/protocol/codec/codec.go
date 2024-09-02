@@ -12,11 +12,12 @@ type Encodable interface {
 	Type() protocol.MessageType
 }
 
+const headerSize = 7
 const DefaultEncodableCapacity = 8192
 
 func Encode(in Encodable) (em protocol.EncodedMessage, err error) {
 
-	b := make([]byte, 7, DefaultEncodableCapacity)
+	b := make([]byte, headerSize, DefaultEncodableCapacity)
 
 	b[0] = byte(in.Type())
 
@@ -29,7 +30,7 @@ func Encode(in Encodable) (em protocol.EncodedMessage, err error) {
 		return nil, err
 	}
 
-	binary.BigEndian.PutUint32(b[3:7], uint32(len(b)))
+	binary.BigEndian.PutUint32(b[3:7], uint32(len(b)-headerSize))
 
 	return b, nil
 }
@@ -41,10 +42,14 @@ func encodeValue(in reflect.Value, b []byte) ([]byte, error) {
 	}
 
 	switch in.Kind() {
-	case reflect.Struct:
-		return encodeStruct(in, b)
 	case reflect.Pointer:
 		return encodeValue(in.Elem(), b)
+	case reflect.Struct:
+		return encodeStruct(in, b)
+	case reflect.Slice:
+		//
+	case reflect.Map:
+		//
 	default:
 
 		if in.CanInterface() {
