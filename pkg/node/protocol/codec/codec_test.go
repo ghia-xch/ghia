@@ -40,29 +40,30 @@ type sampleStruct struct {
 }
 
 var (
-	valFalse           = false
-	valTrue            = true
-	valUint8Zero       = uint8(0)
-	valUint8Max        = uint8(math.MaxUint8)
-	valUint16Zero      = uint16(0)
-	valUint16Max       = uint16(math.MaxUint16)
-	valUint32Zero      = uint32(0)
-	valUint32Max       = uint32(math.MaxUint32)
-	valUint64Zero      = uint64(0)
-	valUint64Max       = uint64(math.MaxUint64)
-	valString          = "hello world"
-	valUint128Zero     = uint128.From64(0)
-	valUint128Max, _   = uint128.FromString("340282366920938463463374607431768211455")
+	valFalse              = false
+	valTrue               = true
+	valUint8Zero          = uint8(0)
+	valUint8Max           = uint8(math.MaxUint8)
+	valUint16Zero         = uint16(0)
+	valUint16Max          = uint16(math.MaxUint16)
+	valUint32Zero         = uint32(0)
+	valUint32Max          = uint32(math.MaxUint32)
+	valUint64Zero         = uint64(0)
+	valUint64Max          = uint64(math.MaxUint64)
+	valString             = "hello world"
+	valUint128Zero        = uint128.From64(0)
+	valUint128Max, _      = uint128.FromString("340282366920938463463374607431768211455")
+	valSampleSubSubStruct = sampleSubSubStruct{
+		a: &valUint16Zero,
+		B: &valUint32Max,
+		C: valString,
+	}
 	valSampleSubStruct = sampleSubStruct{
 		A: valUint16Zero,
 		b: valUint16Max,
 		c: valUint64Max,
 		D: valString,
-		E: sampleSubSubStruct{
-			a: &valUint16Zero,
-			B: &valUint32Max,
-			C: valString,
-		},
+		E: valSampleSubSubStruct,
 		F: valTrue,
 	}
 	valSampleStruct = sampleStruct{
