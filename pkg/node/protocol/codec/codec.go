@@ -75,9 +75,11 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 
 		switch f.Kind() {
 
-		case reflect.Slice:
+		case reflect.Pointer:
 
-			//
+			if b, err = encodeValue(f.Elem(), b); err != nil {
+				return nil, err
+			}
 
 		case reflect.Struct:
 
@@ -85,11 +87,13 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 				return nil, err
 			}
 
-		case reflect.Pointer:
+		case reflect.Slice:
 
-			if b, err = encodeValue(f.Elem(), b); err != nil {
-				return nil, err
-			}
+			//
+
+		case reflect.Map:
+
+			//
 
 		default:
 
