@@ -35,25 +35,59 @@ func Encode(in Encodable) (em protocol.EncodedMessage, err error) {
 	return b, nil
 }
 
-func encodeValue(in reflect.Value, b []byte) ([]byte, error) {
+func encodeValue(v reflect.Value, b []byte) ([]byte, error) {
 
-	if !in.IsValid() {
+	if !v.IsValid() {
 		return []byte{0}, nil
 	}
 
-	switch in.Kind() {
+	var err error
+
+	switch v.Kind() {
 	case reflect.Pointer:
-		return encodeValue(in.Elem(), b)
+		return encodeValue(v.Elem(), b)
 	case reflect.Struct:
-		return encodeStruct(in, b)
+		return encodeStruct(v, b)
 	case reflect.Slice:
-		//
+
+		// encode the length of the slice as uint32
+		if b, err = encodeElem(uint32(v.Len()), b); err != nil {
+			return nil, err
+		}
+
+		// iterate and encode the values
+		for i := 0; i < v.Len(); i++ {
+			if b, err = encodeValue(v.Index(i), b); err != nil {
+				return nil, err
+			}
+		}
+
 	case reflect.Map:
-		//
+
+		keys := v.MapKeys()
+
+		// encode the length of the map as uint32
+		if b, err = encodeElem(uint32(len(keys)), b); err != nil {
+			return nil, err
+		}
+
+		for _, key := range keys {
+
+			// Encode the key
+			if b, err = encodeValue(key, b); err != nil {
+				return nil, err
+			}
+
+			// Encode the value
+			if b, err = encodeValue(key.MapIndex(key), b); err != nil {
+				return nil, err
+			}
+		}
+	
 	default:
 
-		if in.CanInterface() {
-			return encodeElem(in.Interface(), b)
+		if v.CanInterface() {
+			return encodeElem(v.Interface(), b)
 		}
 
 		return nil, errors.New("unsupported type")
