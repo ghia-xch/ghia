@@ -72,40 +72,12 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 
 	for i := 0; i < in.NumField(); i++ {
 
-		f := in.Field(i)
-
 		if !in.Type().Field(i).IsExported() {
 			continue
 		}
 
-		switch f.Kind() {
-
-		case reflect.Pointer:
-
-			if b, err = encodeValue(f.Elem(), b); err != nil {
-				return nil, err
-			}
-
-		case reflect.Struct:
-
-			if b, err = encodeStruct(f, b); err != nil {
-				return nil, err
-			}
-
-		case reflect.Slice:
-
-			//
-
-		case reflect.Map:
-
-			//
-
-		default:
-
-			if b, err = encodeElem(f.Interface(), b); err != nil {
-				return nil, err
-			}
-
+		if b, err = encodeValue(in.Field(i), b); err != nil {
+			return nil, err
 		}
 	}
 
