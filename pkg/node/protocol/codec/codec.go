@@ -8,15 +8,15 @@ import (
 	"reflect"
 )
 
-type Codeable interface {
+type Encodable interface {
 	Type() protocol.MessageType
 }
 
-const DefaultEncodableSize = 8192
+const DefaultEncodableCapacity = 8192
 
-func Encode(in Codeable) (em protocol.EncodedMessage, err error) {
+func Encode(in Encodable) (em protocol.EncodedMessage, err error) {
 
-	b := make([]byte, 7, DefaultEncodableSize)
+	b := make([]byte, 7, DefaultEncodableCapacity)
 
 	b[0] = byte(in.Type())
 
@@ -144,7 +144,7 @@ func encodeElem(in any, b []byte) ([]byte, error) {
 	return nil, errors.New("invalid element type")
 }
 
-func Decode(in Codeable, em protocol.EncodedMessage) error {
+func Decode(in Encodable, em protocol.EncodedMessage) error {
 
 	inType := reflect.ValueOf(in)
 
