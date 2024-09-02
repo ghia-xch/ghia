@@ -43,7 +43,7 @@ func encodeValue(in reflect.Value, b []byte) ([]byte, error) {
 	switch in.Kind() {
 	case reflect.Struct:
 		return encodeStruct(in, b)
-	case reflect.Ptr:
+	case reflect.Pointer:
 		return encodeValue(in.Elem(), b)
 	default:
 
