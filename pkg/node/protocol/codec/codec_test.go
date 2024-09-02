@@ -13,12 +13,19 @@ type encodeTestCase struct {
 	expected []byte
 }
 
+type sampleSubSubStruct struct {
+	a *uint16
+	B *uint32
+	C string
+}
+
 type sampleSubStruct struct {
 	A uint16
 	b uint16
 	c uint64
 	D string
-	E bool
+	E sampleSubSubStruct
+	F bool
 }
 
 type sampleStruct struct {
@@ -51,7 +58,12 @@ var (
 		b: valUint16Max,
 		c: valUint64Max,
 		D: valString,
-		E: valTrue,
+		E: sampleSubSubStruct{
+			a: &valUint16Zero,
+			B: &valUint32Max,
+			C: valString,
+		},
+		F: valTrue,
 	}
 	valSampleStruct = sampleStruct{
 		true, // unexported field should be ignored
@@ -191,8 +203,11 @@ var encodeTestCases = []encodeTestCase{
 			255, 255, 255, 255, // dereferenced pointer to uint32 4294967295
 			0, 0, // uint16 0
 			0, 0, 0, 11, // length 11
-			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100,
-			1,
+			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
+			255, 255, 255, 255, // dereferenced pointer to uint32 4294967295
+			0, 0, 0, 11, // length 11
+			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
+			1, // true
 		},
 	},
 }
