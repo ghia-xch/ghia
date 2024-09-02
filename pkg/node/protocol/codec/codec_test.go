@@ -26,6 +26,7 @@ type sampleSubStruct struct {
 	D string
 	E sampleSubSubStruct
 	F bool
+	G *sampleSubSubStruct
 }
 
 type sampleStruct struct {
@@ -65,6 +66,7 @@ var (
 		D: valString,
 		E: valSampleSubSubStruct,
 		F: valTrue,
+		G: &valSampleSubSubStruct,
 	}
 	valSampleStruct = sampleStruct{
 		true, // unexported field should be ignored
@@ -208,7 +210,10 @@ var encodeTestCases = []encodeTestCase{
 			255, 255, 255, 255, // dereferenced pointer to uint32 4294967295
 			0, 0, 0, 11, // length 11
 			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
-			1, // true
+			1,                  // true
+			255, 255, 255, 255, // dereferenced pointer to uint32 4294967295
+			0, 0, 0, 11, // length 11
+			104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, // "hello world" in decimal
 		},
 	},
 }
