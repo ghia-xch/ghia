@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/gorilla/websocket"
 	"sync"
@@ -19,11 +20,11 @@ type Client struct {
 	conn      *websocket.Conn
 	handshake *Handshake
 
-	inbound  chan protocol.EncodedMessage
-	outbound chan protocol.EncodedMessage
+	inbound  chan message.EncodedMessage
+	outbound chan message.EncodedMessage
 
 	callbacks chan protocol.Callback
-	handlers  map[protocol.MessageType]protocol.Callback
+	handlers  map[message.MessageType]protocol.Callback
 
 	isClosing chan bool
 	isClosed  chan bool
@@ -72,7 +73,7 @@ func (c *Client) Handle(handlers ...protocol.MessageHandler) {
 	}
 }
 
-func (c *Client) Send(em protocol.EncodedMessage) (err error) {
+func (c *Client) Send(em message.EncodedMessage) (err error) {
 
 	c.Lock()
 
@@ -92,7 +93,7 @@ func (c *Client) Send(em protocol.EncodedMessage) (err error) {
 	return nil
 }
 
-func (c *Client) SendWith(em protocol.EncodedMessage, cb protocol.Callback) (err error) {
+func (c *Client) SendWith(em message.EncodedMessage, cb protocol.Callback) (err error) {
 
 	c.Lock()
 
@@ -155,11 +156,11 @@ func NewClient(peerInfo *peer.PeerInfo) (c *Client) {
 	var client = Client{
 		info: peerInfo,
 
-		inbound:  make(chan protocol.EncodedMessage, MaxQueuedInboundMessages),
-		outbound: make(chan protocol.EncodedMessage, MaxQueuedOutboundMessages),
+		inbound:  make(chan message.EncodedMessage, MaxQueuedInboundMessages),
+		outbound: make(chan message.EncodedMessage, MaxQueuedOutboundMessages),
 
 		callbacks: make(chan protocol.Callback, MaxQueuedOutboundMessages),
-		handlers:  make(map[protocol.MessageType]protocol.Callback),
+		handlers:  make(map[message.MessageType]protocol.Callback),
 
 		isClosing: make(chan bool, 1),
 		isClosed:  make(chan bool, 1),

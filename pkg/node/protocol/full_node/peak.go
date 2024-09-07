@@ -2,6 +2,7 @@ package full_node
 
 import (
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"lukechampine.com/uint128"
 )
 
@@ -13,7 +14,7 @@ type NewPeak struct {
 	UnfinishedRewardBlockHash protocol.Hash
 }
 
-func (n *NewPeak) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+func (n *NewPeak) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
 	return enc.Encode(
 		n.HeaderHash,
 		n.Height,
@@ -23,7 +24,7 @@ func (n *NewPeak) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessa
 	)
 }
 
-func (n *NewPeak) Decode(dec *protocol.MessageDecoder) (err error) {
+func (n *NewPeak) Decode(dec *message.MessageDecoder) (err error) {
 
 	if n.HeaderHash, err = dec.ParseHash(); err != nil {
 		return

@@ -2,6 +2,7 @@ package node
 
 import (
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"github.com/gorilla/websocket"
 	"time"
 )
@@ -9,10 +10,10 @@ import (
 func (c *Client) handlerQueuing() {
 
 	var err error
-	var em protocol.EncodedMessage
+	var em message.EncodedMessage
 	var ok bool
 
-	var dec = protocol.NewMessageDecoder()
+	var dec = message.NewMessageDecoder()
 
 	for {
 
@@ -91,7 +92,7 @@ func (c *Client) outboundQueuing() {
 	l.Infoln("starting outbound queuing")
 
 	var err error
-	var em protocol.EncodedMessage
+	var em message.EncodedMessage
 	var ok bool
 
 	ticker := time.NewTicker(PingInterval)
@@ -130,7 +131,7 @@ func (c *Client) outboundQueuing() {
 	}
 }
 
-func (c *Client) drainInboundQueue(dec *protocol.MessageDecoder) (err error) {
+func (c *Client) drainInboundQueue(dec *message.MessageDecoder) (err error) {
 
 	var inboundLen int
 

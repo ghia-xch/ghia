@@ -1,4 +1,4 @@
-package protocol
+package message
 
 var (
 	NullMessageType    = MessageType(0)

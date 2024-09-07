@@ -1,6 +1,9 @@
 package full_node
 
-import "github.com/ghia-xch/ghia/pkg/node/protocol"
+import (
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
+)
 
 type NewTransaction struct {
 	TransactionId protocol.Hash
@@ -8,11 +11,11 @@ type NewTransaction struct {
 	Fees          uint64
 }
 
-func (n *NewTransaction) Type() protocol.MessageType {
+func (n *NewTransaction) Type() message.MessageType {
 	return protocol.NewTransaction
 }
 
-func (n *NewTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+func (n *NewTransaction) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
 
 	enc.Reset(protocol.NewTransaction, nil)
 
@@ -23,7 +26,7 @@ func (n *NewTransaction) Encode(enc *protocol.MessageEncoder) (em protocol.Encod
 	)
 }
 
-func (n *NewTransaction) Decode(dec *protocol.MessageDecoder) (err error) {
+func (n *NewTransaction) Decode(dec *message.MessageDecoder) (err error) {
 
 	if n.TransactionId, err = dec.ParseHash(); err != nil {
 		return
@@ -44,7 +47,7 @@ type RequestTransaction struct {
 	TransactionId protocol.Hash
 }
 
-func (r *RequestTransaction) Type() protocol.MessageType {
+func (r *RequestTransaction) Type() message.MessageType {
 	return protocol.RequestTransaction
 }
 

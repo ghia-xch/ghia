@@ -1,7 +1,8 @@
-package protocol
+package message
 
 import (
 	"encoding/binary"
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"lukechampine.com/uint128"
 )
 
@@ -21,7 +22,7 @@ func (em EncodedMessage) SetId(id Id) {
 func (em EncodedMessage) Type() MessageType {
 
 	if len(em) == 0 {
-		return NullType
+		return protocol.NullType
 	}
 
 	return MessageType(em[0])
@@ -157,7 +158,7 @@ func (m *MessageEncoder) Encode(attrs ...any) (em EncodedMessage, err error) {
 
 			m.pos += len(a)
 
-		case Hash:
+		case protocol.Hash:
 
 			buf = m.raw[m.pos : m.pos+32]
 
@@ -379,13 +380,13 @@ func (md *MessageDecoder) ParseBytes() (value []byte, err error) {
 	return
 }
 
-func (md *MessageDecoder) ParseHash() (value Hash, err error) {
+func (md *MessageDecoder) ParseHash() (value protocol.Hash, err error) {
 
 	if len(md.em[md.pos:]) < 32 {
-		return Hash([]byte{}), MessageAttributeNotDecodableError
+		return protocol.Hash([]byte{}), MessageAttributeNotDecodableError
 	}
 
-	value = Hash(md.em[md.pos : md.pos+32])
+	value = protocol.Hash(md.em[md.pos : md.pos+32])
 
 	md.pos += 32
 

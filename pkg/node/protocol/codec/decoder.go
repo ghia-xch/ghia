@@ -2,11 +2,11 @@ package codec
 
 import (
 	"errors"
-	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"reflect"
 )
 
-func Decode(in Encodable, em protocol.EncodedMessage) error {
+func Decode(in Encodable, em message.EncodedMessage) error {
 
 	inType := reflect.ValueOf(in)
 
@@ -14,7 +14,7 @@ func Decode(in Encodable, em protocol.EncodedMessage) error {
 		return errors.New("expected pointer to struct")
 	}
 
-	if protocol.MessageType(em[0]) != in.Type() {
+	if message.MessageType(em[0]) != in.Type() {
 		return errors.New("message types to not match")
 	}
 

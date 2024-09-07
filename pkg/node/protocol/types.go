@@ -1,5 +1,7 @@
 package protocol
 
+import "github.com/ghia-xch/ghia/pkg/node/protocol/message"
+
 /*
 	Contains an incomplete list of message types. See the following url for the full list:
 
@@ -11,101 +13,101 @@ const (
 
 	// Universal MessageTypes [Any <-> Any]
 
-	NullType      MessageType = 0
-	HandshakeType MessageType = 1
-	Error         MessageType = 255
+	NullType      message.MessageType = 0
+	HandshakeType message.MessageType = 1
+	Error         message.MessageType = 255
 
 	// FullNode MessageTypes [FullNode <-> FullNode]
-	NewPeak                           MessageType = 20
-	NewTransaction                    MessageType = 21
-	RequestTransaction                MessageType = 22
-	RespondTransaction                MessageType = 23
-	RequestProofOfWeight              MessageType = 24
-	RespondProofOfWeight              MessageType = 25
-	RequestBlock                      MessageType = 26
-	RespondBlock                      MessageType = 27
-	RejectBlock                       MessageType = 28
-	RequestBlocks                     MessageType = 29
-	RespondBlocks                     MessageType = 30
-	RejectBlocks                      MessageType = 31
-	NewUnfinishedBlock                MessageType = 32
-	RequestUnfinishedBlock            MessageType = 33
-	RespondUnfinishedBlock            MessageType = 34
-	NewSignagePointOrEndOfSubSlot     MessageType = 35
-	RequestSignagePointOrEndOfSubSlot MessageType = 36
-	RespondSignagePoint               MessageType = 37
-	RespondEndOfSubSlot               MessageType = 38
-	RequestMempoolTransactions        MessageType = 39
-	RequestCompactVDF                 MessageType = 40
-	RespondCompactVDF                 MessageType = 41
-	NewCompactVDF                     MessageType = 42
-	RequestPeers                      MessageType = 43
-	RespondPeers                      MessageType = 44
+	NewPeak                           message.MessageType = 20
+	NewTransaction                    message.MessageType = 21
+	RequestTransaction                message.MessageType = 22
+	RespondTransaction                message.MessageType = 23
+	RequestProofOfWeight              message.MessageType = 24
+	RespondProofOfWeight              message.MessageType = 25
+	RequestBlock                      message.MessageType = 26
+	RespondBlock                      message.MessageType = 27
+	RejectBlock                       message.MessageType = 28
+	RequestBlocks                     message.MessageType = 29
+	RespondBlocks                     message.MessageType = 30
+	RejectBlocks                      message.MessageType = 31
+	NewUnfinishedBlock                message.MessageType = 32
+	RequestUnfinishedBlock            message.MessageType = 33
+	RespondUnfinishedBlock            message.MessageType = 34
+	NewSignagePointOrEndOfSubSlot     message.MessageType = 35
+	RequestSignagePointOrEndOfSubSlot message.MessageType = 36
+	RespondSignagePoint               message.MessageType = 37
+	RespondEndOfSubSlot               message.MessageType = 38
+	RequestMempoolTransactions        message.MessageType = 39
+	RequestCompactVDF                 message.MessageType = 40
+	RespondCompactVDF                 message.MessageType = 41
+	NewCompactVDF                     message.MessageType = 42
+	RequestPeers                      message.MessageType = 43
+	RespondPeers                      message.MessageType = 44
 
 	// Wallet MessageTypes [Wallet <-> FullNode]
-	RequestPuzzleSolution  MessageType = 45
-	RespondPuzzleSolution  MessageType = 46
-	RejectPuzzleSolution   MessageType = 47
-	SendTransaction        MessageType = 48
-	RespondSendTransaction MessageType = 49
-	NewPeakWallet          MessageType = 50
-	RequestBlockHeader     MessageType = 51
-	RespondBlockHeader     MessageType = 52
-	RejectBlockHeader      MessageType = 53
-	RequestRemovals        MessageType = 54
-	RespondRemovals        MessageType = 55
-	RejectRemovals         MessageType = 56
-	RequestAdditions       MessageType = 57
-	RespondAdditions       MessageType = 58
-	RejectAdditions        MessageType = 59
-	RequestHeaderBlocks    MessageType = 60
-	RejectHeaderBlocks     MessageType = 61
-	RespondHeaderBlocks    MessageType = 62
+	RequestPuzzleSolution  message.MessageType = 45
+	RespondPuzzleSolution  message.MessageType = 46
+	RejectPuzzleSolution   message.MessageType = 47
+	SendTransaction        message.MessageType = 48
+	RespondSendTransaction message.MessageType = 49
+	NewPeakWallet          message.MessageType = 50
+	RequestBlockHeader     message.MessageType = 51
+	RespondBlockHeader     message.MessageType = 52
+	RejectBlockHeader      message.MessageType = 53
+	RequestRemovals        message.MessageType = 54
+	RespondRemovals        message.MessageType = 55
+	RejectRemovals         message.MessageType = 56
+	RequestAdditions       message.MessageType = 57
+	RespondAdditions       message.MessageType = 58
+	RejectAdditions        message.MessageType = 59
+	RequestHeaderBlocks    message.MessageType = 60
+	RejectHeaderBlocks     message.MessageType = 61
+	RespondHeaderBlocks    message.MessageType = 62
 
 	// Introducer MessageTypes [Introducer <-> FullNode]
-	RequestPeersIntroducer MessageType = 63
-	RespondPeersIntroducer MessageType = 64
+	RequestPeersIntroducer message.MessageType = 63
+	RespondPeersIntroducer message.MessageType = 64
 
 	// Wallet Updates
-	CoinStateUpdate              MessageType = 69
-	RegisterInterestInPuzzleHash MessageType = 70
-	RespondInterestInPuzzleHash  MessageType = 71
-	RegisterInterestInCoin       MessageType = 72
-	RespondInterestInCoin        MessageType = 73
-	RequestChildren              MessageType = 74
-	RespondChildren              MessageType = 75
-	RequestSESHashes             MessageType = 76
-	RespondSESHashes             MessageType = 77
+	CoinStateUpdate              message.MessageType = 69
+	RegisterInterestInPuzzleHash message.MessageType = 70
+	RespondInterestInPuzzleHash  message.MessageType = 71
+	RegisterInterestInCoin       message.MessageType = 72
+	RespondInterestInCoin        message.MessageType = 73
+	RequestChildren              message.MessageType = 74
+	RespondChildren              message.MessageType = 75
+	RequestSESHashes             message.MessageType = 76
+	RespondSESHashes             message.MessageType = 77
 
-	RequestBlockHeaders MessageType = 86
-	RejectBlockHeaders  MessageType = 87
-	RespondBlockHeaders MessageType = 88
+	RequestBlockHeaders message.MessageType = 86
+	RejectBlockHeaders  message.MessageType = 87
+	RespondBlockHeaders message.MessageType = 88
 
-	RequestFeeEstimates MessageType = 89
-	RespondFeeEstimates MessageType = 90
+	RequestFeeEstimates message.MessageType = 89
+	RespondFeeEstimates message.MessageType = 90
 
 	// FullNode Updates
-	NoneResponse            MessageType = 91
-	NewUnfinishedBlock2     MessageType = 92
-	RequestUnfinishedBlock2 MessageType = 93
+	NoneResponse            message.MessageType = 91
+	NewUnfinishedBlock2     message.MessageType = 92
+	RequestUnfinishedBlock2 message.MessageType = 93
 
 	// Wallet Sync
-	RequestRemovePuzzleSubscriptions MessageType = 94
-	RespondRemovePuzzleSubscriptions MessageType = 95
-	RequestRemoveCoinSubscriptions   MessageType = 96
-	RespondRemoveCoinSubscriptions   MessageType = 97
-	RequestPuzzleState               MessageType = 98
-	RespondPuzzleState               MessageType = 99
-	RejectPuzzleState                MessageType = 100
-	RequestCoinState                 MessageType = 101
-	RespondCoinState                 MessageType = 102
-	RejectCoinState                  MessageType = 103
+	RequestRemovePuzzleSubscriptions message.MessageType = 94
+	RespondRemovePuzzleSubscriptions message.MessageType = 95
+	RequestRemoveCoinSubscriptions   message.MessageType = 96
+	RespondRemoveCoinSubscriptions   message.MessageType = 97
+	RequestPuzzleState               message.MessageType = 98
+	RespondPuzzleState               message.MessageType = 99
+	RejectPuzzleState                message.MessageType = 100
+	RequestCoinState                 message.MessageType = 101
+	RespondCoinState                 message.MessageType = 102
+	RejectCoinState                  message.MessageType = 103
 
 	// Wallet Mempool Updates
-	MempoolItemsAdded   MessageType = 104
-	MempoolItemsRemoved MessageType = 105
-	RequestCostInfo     MessageType = 106
-	RespondCostInfo     MessageType = 107
+	MempoolItemsAdded   message.MessageType = 104
+	MempoolItemsRemoved message.MessageType = 105
+	RequestCostInfo     message.MessageType = 106
+	RespondCostInfo     message.MessageType = 107
 )
 
 var (
@@ -114,7 +116,7 @@ var (
 		Singletons are messages that require no response from the peer.
 	*/
 
-	singletons = map[MessageType]bool{
+	singletons = map[message.MessageType]bool{
 
 		// FullNode
 		NewPeak:                       true,
@@ -134,7 +136,7 @@ var (
 		NewPeakWallet: true,
 	}
 
-	validResponses = map[MessageType][]MessageType{
+	validResponses = map[message.MessageType][]message.MessageType{
 
 		// FullNode
 		RequestTransaction:                {RespondTransaction},
@@ -173,23 +175,23 @@ var (
 	}
 )
 
-func HasNoExpectedResponse(mt MessageType) (isNotExpected bool) {
+func HasNoExpectedResponse(mt message.MessageType) (isNotExpected bool) {
 
 	_, isNotExpected = singletons[mt]
 
 	return
 }
 
-func HasExpectedResponse(mt MessageType) (isExpected bool) {
+func HasExpectedResponse(mt message.MessageType) (isExpected bool) {
 
 	_, isExpected = validResponses[mt]
 
 	return
 }
 
-func IsValidResponse(sent MessageType, recv MessageType) (isValid bool) {
+func IsValidResponse(sent message.MessageType, recv message.MessageType) (isValid bool) {
 
-	var responses []MessageType
+	var responses []message.MessageType
 
 	responses, isValid = validResponses[sent]
 
@@ -206,7 +208,7 @@ func IsValidResponse(sent MessageType, recv MessageType) (isValid bool) {
 	return false
 }
 
-func TypeAsString(mt MessageType) string {
+func TypeAsString(mt message.MessageType) string {
 
 	switch mt {
 	case NullType:

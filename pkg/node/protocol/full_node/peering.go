@@ -2,6 +2,7 @@ package full_node
 
 import (
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"github.com/ghia-xch/ghia/pkg/peer"
 )
 
@@ -20,7 +21,7 @@ import (
 
 type RequestPeers [7]byte
 
-func CreateRequestPeers() (em protocol.EncodedMessage) {
+func CreateRequestPeers() (em message.EncodedMessage) {
 
 	var rp RequestPeers
 
@@ -33,7 +34,7 @@ type RespondPeers struct {
 	peers []peer.TimestamptedPeerInfo
 }
 
-func (rp *RespondPeers) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
+func (rp *RespondPeers) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
 
 	if _, err = enc.Encode(uint32(len(rp.peers))); err != nil {
 		return
@@ -48,7 +49,7 @@ func (rp *RespondPeers) Encode(enc *protocol.MessageEncoder) (em protocol.Encode
 	return em, nil
 }
 
-func (rp *RespondPeers) Decode(dec *protocol.MessageDecoder) (err error) {
+func (rp *RespondPeers) Decode(dec *message.MessageDecoder) (err error) {
 
 	var length uint32
 

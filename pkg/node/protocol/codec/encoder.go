@@ -4,13 +4,14 @@ import (
 	"encoding/binary"
 	"errors"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	log "github.com/sirupsen/logrus"
 	"lukechampine.com/uint128"
 	"reflect"
 )
 
 type Encodable interface {
-	Type() protocol.MessageType
+	Type() message.MessageType
 }
 
 type EncodableElement interface {
@@ -19,7 +20,7 @@ type EncodableElement interface {
 
 const DefaultEncodableCapacity = 8192
 
-func Encode(id *protocol.Id, in Encodable) (em protocol.EncodedMessage, err error) {
+func Encode(id *message.Id, in Encodable) (em message.EncodedMessage, err error) {
 
 	var b, headerDataLen []byte
 	var headerLen int
@@ -40,7 +41,7 @@ func Encode(id *protocol.Id, in Encodable) (em protocol.EncodedMessage, err erro
 const headerSizeWithoutId = 6
 const headerSizeWithId = 8
 
-func prepareHeader(id *protocol.Id, in Encodable) (b []byte, headerLen int, headerDataLen []byte) {
+func prepareHeader(id *message.Id, in Encodable) (b []byte, headerLen int, headerDataLen []byte) {
 
 	if id != nil {
 

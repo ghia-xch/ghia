@@ -1,7 +1,9 @@
 package protocol
 
-type Callback func(dec *MessageDecoder) (err error)
+import "github.com/ghia-xch/ghia/pkg/node/protocol/message"
+
+type Callback func(dec *message.MessageDecoder) (err error)
 
 var (
-	NullCallback = func(em EncodedMessage) (err error) { return nil }
+	NullCallback = func(em message.EncodedMessage) (err error) { return nil }
 )

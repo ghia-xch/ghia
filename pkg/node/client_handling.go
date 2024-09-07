@@ -3,9 +3,10 @@ package node
 import (
 	"errors"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 )
 
-func (c *Client) getMessageHandler(em protocol.EncodedMessage) (cb protocol.Callback) {
+func (c *Client) getMessageHandler(em message.EncodedMessage) (cb protocol.Callback) {
 
 	if protocol.HasNoExpectedResponse(em.Type()) {
 		return c.handlers[em.Type()]
@@ -14,7 +15,7 @@ func (c *Client) getMessageHandler(em protocol.EncodedMessage) (cb protocol.Call
 	return <-c.callbacks
 }
 
-func (c *Client) handleInboundMessage(dec *protocol.MessageDecoder, em protocol.EncodedMessage) (err error) {
+func (c *Client) handleInboundMessage(dec *message.MessageDecoder, em message.EncodedMessage) (err error) {
 
 	var cb protocol.Callback
 

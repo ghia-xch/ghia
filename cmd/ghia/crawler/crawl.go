@@ -8,6 +8,7 @@ import (
 	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/full_node"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -32,7 +33,7 @@ var crawlCommand = &cobra.Command{
 		client.Handle(
 			protocol.Handler(
 				protocol.NewPeak,
-				func(dec *protocol.MessageDecoder) (err error) {
+				func(dec *message.MessageDecoder) (err error) {
 
 					var newPeak full_node.NewPeak
 
@@ -50,7 +51,7 @@ var crawlCommand = &cobra.Command{
 			),
 			protocol.Handler(
 				protocol.NewTransaction,
-				func(dec *protocol.MessageDecoder) (err error) {
+				func(dec *message.MessageDecoder) (err error) {
 
 					var newTransaction full_node.NewTransaction
 
@@ -90,7 +91,7 @@ var crawlCommand = &cobra.Command{
 			),
 			protocol.Handler(
 				protocol.NewSignagePointOrEndOfSubSlot,
-				func(dec *protocol.MessageDecoder) (err error) {
+				func(dec *message.MessageDecoder) (err error) {
 
 					spew.Dump(dec.Type())
 
