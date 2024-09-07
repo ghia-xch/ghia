@@ -1,10 +1,12 @@
 package node
 
 import (
+	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/network"
 	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/codec"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/full_node"
 	"github.com/gorilla/websocket"
 )
@@ -21,7 +23,7 @@ var (
 )
 
 type Handshake struct {
-	NetworkId       *network.Network
+	NetworkId       network.Network
 	ProtocolVersion string
 	SoftwareVersion string
 	ServerPort      uint16
@@ -59,7 +61,9 @@ func (h *Handshake) Decode(dec *protocol.MessageDecoder, em protocol.EncodedMess
 		return
 	}
 
-	h.NetworkId = network.NewNetwork(str)
+	if h.NetworkId, err = network.Select(str); err != nil {
+		return
+	}
 
 	if str, err = dec.ParseString(); err != nil {
 		return
@@ -96,15 +100,15 @@ func (h *Handshake) Decode(dec *protocol.MessageDecoder, em protocol.EncodedMess
 	return nil
 }
 
-func performHandshake(conn *websocket.Conn, enc *protocol.MessageEncoder, h1 *Handshake) (h2 *Handshake, err error) {
+func performHandshake(conn *websocket.Conn, h1 *Handshake) (h2 *Handshake, err error) {
 
 	var em protocol.EncodedMessage
 
-	enc.Reset(protocol.HandshakeType, nil)
-
-	if em, err = h1.Encode(enc); err != nil {
+	if em, err = codec.Encode(nil, h1); err != nil {
 		return nil, err
 	}
+
+	spew.Dump(em)
 
 	if err = conn.WriteMessage(websocket.BinaryMessage, em); err != nil {
 		return nil, err

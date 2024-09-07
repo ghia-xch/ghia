@@ -1,13 +1,9 @@
 package node
 
-import (
-	"github.com/ghia-xch/ghia/pkg/node/protocol"
-)
-
 type Type uint8
 
-func (t Type) Encode(enc *protocol.MessageEncoder) (em protocol.EncodedMessage, err error) {
-	return enc.Encode(uint8(t))
+func (t Type) Encode(enc []byte) ([]byte, error) {
+	return append(enc, byte(t)), nil
 }
 
 const (

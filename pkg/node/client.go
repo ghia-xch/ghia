@@ -48,7 +48,7 @@ func (c *Client) Open(ctx context.Context, timeout time.Duration) (err error) {
 		return err
 	}
 
-	if c.handshake, err = performHandshake(c.conn, protocol.NewMessageEncoder(128), DefaultHandshake); err != nil {
+	if c.handshake, err = performHandshake(c.conn, DefaultHandshake); err != nil {
 		return err
 	}
 

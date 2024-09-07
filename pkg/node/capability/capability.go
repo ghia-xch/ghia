@@ -1,5 +1,7 @@
 package capability
 
+import "encoding/binary"
+
 const (
 	Base           Capability = 1
 	BlockHeaders   Capability = 2
@@ -9,3 +11,7 @@ const (
 )
 
 type Capability uint16
+
+func (c Capability) Encode(enc []byte) ([]byte, error) {
+	return binary.BigEndian.AppendUint16(enc, uint16(c)), nil
+}

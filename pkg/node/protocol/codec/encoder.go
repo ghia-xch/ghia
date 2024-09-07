@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	log "github.com/sirupsen/logrus"
 	"lukechampine.com/uint128"
 	"reflect"
 )
@@ -12,17 +13,18 @@ type Encodable interface {
 	Type() protocol.MessageType
 }
 
-const headerSize = 7
+type EncodableElement interface {
+	Encode(enc []byte) ([]byte, error)
+}
+
 const DefaultEncodableCapacity = 8192
 
-func Encode(in Encodable) (em protocol.EncodedMessage, err error) {
+func Encode(id *protocol.Id, in Encodable) (em protocol.EncodedMessage, err error) {
 
-	b := make([]byte, headerSize, DefaultEncodableCapacity)
+	var b, headerDataLen []byte
+	var headerLen int
 
-	b[0] = byte(in.Type())
-
-	// We should add future support for setting an id here.
-	// At this time no message types support them.
+	b, headerLen, headerDataLen = prepareHeader(id, in)
 
 	inType := reflect.ValueOf(in)
 
@@ -30,9 +32,34 @@ func Encode(in Encodable) (em protocol.EncodedMessage, err error) {
 		return nil, err
 	}
 
-	binary.BigEndian.PutUint32(b[3:7], uint32(len(b)-headerSize))
+	binary.BigEndian.PutUint32(headerDataLen, uint32(len(b)-headerLen))
 
 	return b, nil
+}
+
+const headerSizeWithoutId = 6
+const headerSizeWithId = 8
+
+func prepareHeader(id *protocol.Id, in Encodable) (b []byte, headerLen int, headerDataLen []byte) {
+
+	if id != nil {
+
+		b = make([]byte, headerSizeWithId, DefaultEncodableCapacity)
+
+		b[0] = byte(in.Type())
+		b[1] = 1
+
+		binary.BigEndian.PutUint16(b[2:4], uint16(*id))
+
+		return b, headerSizeWithId, b[headerSizeWithId-4 : headerSizeWithId]
+	}
+
+	b = make([]byte, headerSizeWithoutId, DefaultEncodableCapacity)
+
+	b[0] = byte(in.Type())
+	b[1] = 0
+
+	return b, headerSizeWithoutId, b[headerSizeWithoutId-4 : headerSizeWithoutId]
 }
 
 func encodeValue(v reflect.Value, b []byte) ([]byte, error) {
@@ -51,7 +78,7 @@ func encodeValue(v reflect.Value, b []byte) ([]byte, error) {
 	case reflect.Slice:
 
 		// encode the length of the slice as uint32
-		if b, err = encodeElem(uint32(v.Len()), b); err != nil {
+		if b, err = EncodeElement(uint32(v.Len()), b); err != nil {
 			return nil, err
 		}
 
@@ -67,7 +94,7 @@ func encodeValue(v reflect.Value, b []byte) ([]byte, error) {
 		keys := v.MapKeys()
 
 		// encode the length of the map as uint32
-		if b, err = encodeElem(uint32(len(keys)), b); err != nil {
+		if b, err = EncodeElement(uint32(len(keys)), b); err != nil {
 			return nil, err
 		}
 
@@ -79,15 +106,17 @@ func encodeValue(v reflect.Value, b []byte) ([]byte, error) {
 			}
 
 			// Encode the value
-			if b, err = encodeValue(key.MapIndex(key), b); err != nil {
+			if b, err = encodeValue(v.MapIndex(key), b); err != nil {
 				return nil, err
 			}
 		}
-	
+
+		return b, nil
+
 	default:
 
 		if v.CanInterface() {
-			return encodeElem(v.Interface(), b)
+			return EncodeElement(v.Interface(), b)
 		}
 
 		return nil, errors.New("unsupported type")
@@ -118,7 +147,7 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 	return b, nil
 }
 
-func encodeElem(in any, b []byte) ([]byte, error) {
+func EncodeElement(in any, b []byte) ([]byte, error) {
 
 	switch v := in.(type) {
 	case nil:
@@ -150,25 +179,11 @@ func encodeElem(in any, b []byte) ([]byte, error) {
 	case []byte:
 		b = binary.BigEndian.AppendUint32(b, uint32(len(v)))
 		return append(b, v...), nil
+	case EncodableElement:
+		return v.Encode(b)
 	}
+
+	log.Errorf("invalid element type %T", in)
 
 	return nil, errors.New("invalid element type")
-}
-
-func Decode(in Encodable, em protocol.EncodedMessage) error {
-
-	inType := reflect.ValueOf(in)
-
-	if inType.Kind() != reflect.Ptr {
-		return errors.New("expected pointer to struct")
-	}
-
-	if protocol.MessageType(em[0]) != in.Type() {
-		return errors.New("message types to not match")
-	}
-
-	// We should add future support for setting an id here.
-	// At this time no message types support them.
-
-	return nil
 }

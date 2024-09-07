@@ -51,7 +51,7 @@ func initBase() {
 	}
 }
 
-var N *network.Network
+var N network.Network
 
 func initNetwork() {
 
@@ -72,7 +72,7 @@ func initConfig() {
 
 	if viper.GetString(configFileFlag) == "" {
 
-		configBase = viper.GetString(baseDirFlag) + "/" + N.String.String()
+		configBase = viper.GetString(baseDirFlag) + "/" + N.String()
 
 		if err = os.MkdirAll(configBase, 0755); err != nil {
 			cobra.CheckErr(err)
@@ -142,7 +142,7 @@ func initLogging() {
 	var err error
 
 	if viper.GetString(logsDirFlag) == "" {
-		viper.Set(logsDirFlag, viper.GetString(baseDirFlag)+"/"+N.String.String()+"/logs")
+		viper.Set(logsDirFlag, viper.GetString(baseDirFlag)+"/"+N.String()+"/logs")
 	}
 
 	if err = os.MkdirAll(viper.GetString(logsDirFlag), 0755); err != nil {
@@ -165,7 +165,7 @@ func initData() {
 	var err error
 
 	if viper.GetString(dataDirFlag) == "" {
-		viper.Set(dataDirFlag, viper.GetString(baseDirFlag)+"/"+N.String.String()+"/data")
+		viper.Set(dataDirFlag, viper.GetString(baseDirFlag)+"/"+N.String()+"/data")
 	}
 
 	if err = os.MkdirAll(viper.GetString(dataDirFlag), 0755); err != nil {
@@ -198,12 +198,12 @@ func initKeys() {
 
 	if viper.GetString(nodeKeyPathFlag) == "" {
 
-		if err = os.MkdirAll(viper.GetString(baseDirFlag)+"/"+N.String.String()+"/keys", 0755); err != nil {
+		if err = os.MkdirAll(viper.GetString(baseDirFlag)+"/"+N.String()+"/keys", 0755); err != nil {
 			cobra.CheckErr(err)
 		}
 
-		viper.Set(nodeKeyPathFlag, viper.GetString(baseDirFlag)+"/"+N.String.String()+"/keys/chia.key")
-		viper.Set(nodeCertPathFlag, viper.GetString(baseDirFlag)+"/"+N.String.String()+"/keys/chia.crt")
+		viper.Set(nodeKeyPathFlag, viper.GetString(baseDirFlag)+"/"+N.String()+"/keys/chia.key")
+		viper.Set(nodeCertPathFlag, viper.GetString(baseDirFlag)+"/"+N.String()+"/keys/chia.crt")
 	}
 
 	var rCert, rKey []byte

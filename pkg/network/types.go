@@ -2,24 +2,32 @@ package network
 
 import (
 	"errors"
-	"github.com/ghia-xch/ghia/pkg/node/protocol/primitive"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/codec"
 )
 
 var (
-	Mainnet = &Network{primitive.NewString("mainnet")}
-	Testnet = &Network{primitive.NewString("testnet")}
-	Simnet  = &Network{primitive.NewString("simnet")}
+	Mainnet Network = "mainnet"
+	Testnet Network = "testnet"
+	Simnet  Network = "simnet"
 )
 
-type Network struct{ primitive.String }
+type Network string
 
-var DefaultNetwork *Network = Mainnet
-
-func NewNetwork(str string) *Network {
-	return &Network{primitive.NewString(str)}
+func (n Network) String() string {
+	return string(n)
 }
 
-func Select(str string) (*Network, error) {
+func (n Network) Encode(enc []byte) ([]byte, error) {
+	return codec.EncodeElement(string(n), enc)
+}
+
+var DefaultNetwork Network = Mainnet
+
+func NewNetwork(str string) Network {
+	return Network(str)
+}
+
+func Select(str string) (Network, error) {
 
 	switch str {
 	case "mainnet":
@@ -29,6 +37,6 @@ func Select(str string) (*Network, error) {
 	case "simnet":
 		return Simnet, nil
 	default:
-		return nil, errors.New("'" + str + "' is not a valid network.")
+		return Network(""), errors.New("'" + str + "' is not a valid network.")
 	}
 }

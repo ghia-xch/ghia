@@ -66,14 +66,13 @@ var crawlCommand = &cobra.Command{
 					l.Info("requesting transaction: [", newTransaction.TransactionId.String(), "]")
 
 					spew.Dump(codec.Encode(
+						nil,
 						&full_node.RequestTransaction{
 							TransactionId: newTransaction.TransactionId,
 						},
 					))
 
-					spew.Dump(codec.Encode(&newTransaction))
-
-					spew.Dump(codec.Encode(node.DefaultHandshake))
+					spew.Dump(codec.Encode(nil, &newTransaction))
 
 					//if err = client.SendWith(
 					//	full_node.CreateRequestTransaction(newTransaction.TransactionId),
