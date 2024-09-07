@@ -24,9 +24,9 @@ func (r *RequestProofOfWeight) Decode(dec *message.MessageDecoder) (err error) {
 		return err
 	}
 
-	if r.Tip, err = dec.ParseHash(); err != nil {
-		return err
-	}
+	//if r.Tip, err = dec.ParseHash(); err != nil {
+	//	return err
+	//}
 
 	return nil
 }

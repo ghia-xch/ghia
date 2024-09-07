@@ -28,9 +28,9 @@ func (n *NewTransaction) Encode(enc *message.MessageEncoder) (em message.Encoded
 
 func (n *NewTransaction) Decode(dec *message.MessageDecoder) (err error) {
 
-	if n.TransactionId, err = dec.ParseHash(); err != nil {
-		return
-	}
+	//if n.TransactionId, err = dec.ParseHash(); err != nil {
+	//	return
+	//}
 
 	if n.Cost, err = dec.ParseUint64(); err != nil {
 		return

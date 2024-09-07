@@ -26,9 +26,9 @@ func (n *NewPeak) Encode(enc *message.MessageEncoder) (em message.EncodedMessage
 
 func (n *NewPeak) Decode(dec *message.MessageDecoder) (err error) {
 
-	if n.HeaderHash, err = dec.ParseHash(); err != nil {
-		return
-	}
+	//if n.HeaderHash, err = dec.ParseHash(); err != nil {
+	//	return
+	//}
 
 	if n.Height, err = dec.ParseUint32(); err != nil {
 		return
@@ -42,9 +42,9 @@ func (n *NewPeak) Decode(dec *message.MessageDecoder) (err error) {
 		return
 	}
 
-	if n.UnfinishedRewardBlockHash, err = dec.ParseHash(); err != nil {
-		return
-	}
+	//if n.UnfinishedRewardBlockHash, err = dec.ParseHash(); err != nil {
+	//	return
+	//}
 
 	return
 }

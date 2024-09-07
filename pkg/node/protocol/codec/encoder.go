@@ -3,7 +3,6 @@ package codec
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	log "github.com/sirupsen/logrus"
 	"lukechampine.com/uint128"
@@ -175,8 +174,6 @@ func EncodeElement(in any, b []byte) ([]byte, error) {
 	case uint128.Uint128:
 		b = binary.BigEndian.AppendUint64(b, v.Hi)
 		return binary.BigEndian.AppendUint64(b, v.Lo), nil
-	case protocol.Hash:
-		return append(b, v.Bytes()...), nil
 	case []byte:
 		b = binary.BigEndian.AppendUint32(b, uint32(len(v)))
 		return append(b, v...), nil
@@ -187,4 +184,8 @@ func EncodeElement(in any, b []byte) ([]byte, error) {
 	log.Errorf("invalid element type %T", in)
 
 	return nil, errors.New("invalid element type")
+}
+
+func EncodeRaw(in []byte, b []byte) ([]byte, error) {
+	return append(b, in...), nil
 }
