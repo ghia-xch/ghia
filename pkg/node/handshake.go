@@ -1,7 +1,6 @@
 package node
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/network"
 	"github.com/ghia-xch/ghia/pkg/node/capability"
@@ -107,8 +106,6 @@ func performHandshake(conn *websocket.Conn, h1 *Handshake) (h2 *Handshake, err e
 	if em, err = codec.Encode(nil, h1); err != nil {
 		return nil, err
 	}
-
-	spew.Dump(em)
 
 	if err = conn.WriteMessage(websocket.BinaryMessage, em); err != nil {
 		return nil, err
