@@ -52,46 +52,43 @@ var crawlCommand = &cobra.Command{
 					return err
 				},
 			),
-			//protocol.Handler(
-			//	protocol.NewTransaction,
-			//	func(dec *message.MessageDecoder) (err error) {
-			//
-			//		var newTransaction full_node.NewTransaction
-			//
-			//		if err = newTransaction.Decode(dec); err != nil {
-			//			return err
-			//		}
-			//
-			//		l.Info("new transaction found: [", newTransaction.TransactionId.String(), "]")
-			//		l.Info("-- cost: ", newTransaction.Cost)
-			//		l.Info("-- fees: ", newTransaction.Fees)
-			//
-			//		l.Info("requesting transaction: [", newTransaction.TransactionId.String(), "]")
-			//
-			//		//spew.Dump(codec.Encode(
-			//		//	nil,
-			//		//	&full_node.RequestTransaction{
-			//		//		TransactionId: newTransaction.TransactionId,
-			//		//	},
-			//		//))
-			//		//
-			//		//spew.Dump(codec.Encode(nil, &newTransaction))
-			//
-			//		//if err = client.SendWith(
-			//		//	full_node.CreateRequestTransaction(newTransaction.TransactionId),
-			//		//	func(dec *protocol.MessageDecoder) (err error) {
-			//		//
-			//		//		spew.Dump(dec.Type())
-			//		//
-			//		//		return err
-			//		//	},
-			//		//); err != nil {
-			//		//	return err
-			//		//}
-			//
-			//		return nil
-			//	},
-			//),
+			protocol.Handler(
+				protocol.NewTransaction,
+				func(em message.EncodedMessage) (err error) {
+
+					var nt full_node.NewTransaction
+
+					if err = codec.Decode(&nt, em); err != nil {
+						return err
+					}
+
+					l.Info("new transaction found: [", nt.TransactionId.String(), "]")
+					l.Info("-- cost: ", nt.Cost)
+					l.Info("-- fees: ", nt.Fees)
+
+					l.Info("requesting transaction: [", nt.TransactionId.String(), "]")
+
+					var rq full_node.RequestTransaction
+					rq.TransactionId = nt.TransactionId
+
+					spew.Dump(codec.Encode(nil, &nt))
+					spew.Dump(codec.Encode(nil, &rq))
+
+					//if err = client.SendWith(
+					//	full_node.CreateRequestTransaction(nt.TransactionId),
+					//	func(dec *protocol.MessageDecoder) (err error) {
+					//
+					//		spew.Dump(dec.Type())
+					//
+					//		return err
+					//	},
+					//); err != nil {
+					//	return err
+					//}
+
+					return nil
+				},
+			),
 			//protocol.Handler(
 			//	protocol.NewSignagePointOrEndOfSubSlot,
 			//	func(dec *message.MessageDecoder) (err error) {

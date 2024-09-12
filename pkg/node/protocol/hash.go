@@ -16,7 +16,7 @@ func (h *Hash) Bytes() []byte {
 	return h[:]
 }
 
-func (h *Hash) Encode(enc []byte) ([]byte, error) {
+func (h Hash) Encode(enc []byte) ([]byte, error) {
 	return codec.EncodeRaw(h[:], enc)
 }
 
