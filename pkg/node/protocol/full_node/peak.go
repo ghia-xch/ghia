@@ -17,3 +17,13 @@ type NewPeak struct {
 func (n *NewPeak) Type() message.MessageType {
 	return protocol.NewPeak
 }
+
+func CreateNewPeak() *NewPeak {
+	return &NewPeak{
+		HeaderHash:                protocol.Hash{},
+		Height:                    0,
+		Weight:                    uint128.Uint128{},
+		ForkPointWithPreviousPeak: 0,
+		UnfinishedRewardBlockHash: protocol.Hash{},
+	}
+}

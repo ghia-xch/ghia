@@ -3,7 +3,6 @@ package codec
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"reflect"
 )
@@ -125,22 +124,18 @@ func DecodeElement(elem reflect.Value, b []byte) ([]byte, error) {
 
 	decoderInterface := reflect.TypeOf((*DecodableElement)(nil)).Elem()
 
-	spew.Dump(elem.Type().Implements(decoderInterface))
+	if elem.Addr().Type().Implements(decoderInterface) {
 
-	//
-	//if elem.Type().Implements(decoderInterface) {
-	//
-	//	res := elem.MethodByName("Decode").Call([]reflect.Value{reflect.ValueOf(b)})
-	//
-	//	if res[1].IsValid() {
-	//		return res[0].Interface().([]byte), nil
-	//	}
-	//
-	//	return nil, res[1].Interface().(error)
-	//}
+		res := elem.Addr().MethodByName("Decode").Call([]reflect.Value{reflect.ValueOf(b)})
+
+		if res[1].IsValid() {
+			return res[0].Interface().([]byte), nil
+		}
+
+		return nil, res[1].Interface().(error)
+	}
 
 	switch elem.Kind() {
-
 	case reflect.Bool:
 		elem.SetBool(b[0] == 1)
 		return b[1:], nil

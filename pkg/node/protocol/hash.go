@@ -3,7 +3,6 @@ package protocol
 import (
 	"encoding/hex"
 	"errors"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/codec"
 )
 
@@ -28,8 +27,6 @@ func (h *Hash) Decode(b []byte) ([]byte, error) {
 	}
 
 	copy(h[0:32], b[0:32])
-
-	spew.Dump(h)
 
 	return b[32:], nil
 }

@@ -38,20 +38,16 @@ var crawlCommand = &cobra.Command{
 				protocol.NewPeak,
 				func(em message.EncodedMessage) (err error) {
 
-					spew.Dump(em)
+					np := full_node.CreateNewPeak()
 
-					var newPeak full_node.NewPeak
-
-					if err = codec.Decode(&newPeak, em); err != nil {
+					if err = codec.Decode(np, em); err != nil {
 						return err
 					}
 
-					spew.Dump(newPeak)
-
-					l.Info("new peak found: ", newPeak.Height, " [", newPeak.HeaderHash.String(), "] ")
-					l.Info("-- weight: ", newPeak.Weight.String())
-					l.Info("-- fork: ", newPeak.ForkPointWithPreviousPeak)
-					l.Info("-- unfinished block hash: ", newPeak.UnfinishedRewardBlockHash.String())
+					l.Info("new peak found: ", np.Height, " [", np.HeaderHash.String(), "] ")
+					l.Info("-- weight: ", np.Weight.String())
+					l.Info("-- fork: ", np.ForkPointWithPreviousPeak)
+					l.Info("-- unfinished block hash: ", np.UnfinishedRewardBlockHash.String())
 
 					return err
 				},
