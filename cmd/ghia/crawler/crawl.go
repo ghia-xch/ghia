@@ -6,8 +6,6 @@ import (
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/node"
 	"github.com/ghia-xch/ghia/pkg/node/capability"
-	"github.com/ghia-xch/ghia/pkg/node/protocol/codec"
-	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"github.com/ghia-xch/ghia/pkg/peer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -23,26 +21,26 @@ var crawlCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		var err error
-		var em message.EncodedMessage
-
-		if em, err = codec.Encode(nil, node.DefaultHandshake); err != nil {
-			l.Errorf(err.Error())
-			os.Exit(1)
-		}
-
-		spew.Dump(em)
-
-		var h = node.MakeHandshake()
-
-		if err = codec.Decode(h, em); err != nil {
-			l.Errorf(err.Error())
-			os.Exit(1)
-		}
-
-		spew.Dump(h)
-
-		os.Exit(0)
-		return
+		//var em message.EncodedMessage
+		//
+		//if em, err = codec.Encode(nil, node.DefaultHandshake); err != nil {
+		//	l.Errorf(err.Error())
+		//	os.Exit(1)
+		//}
+		//
+		//spew.Dump(em)
+		//
+		//var h = node.MakeHandshake()
+		//
+		//if err = codec.Decode(h, em); err != nil {
+		//	l.Errorf(err.Error())
+		//	os.Exit(1)
+		//}
+		//
+		//spew.Dump(h)
+		//
+		//os.Exit(0)
+		//return
 
 		l.Println("-- ghia (" + viper.GetString("network") + ") - " + pkg.SemVer + " - PoST Freedom. --")
 
