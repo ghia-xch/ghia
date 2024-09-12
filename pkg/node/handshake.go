@@ -35,71 +35,6 @@ func (h *Handshake) Type() message.MessageType {
 	return protocol.HandshakeType
 }
 
-func (h *Handshake) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
-
-	if em, err = enc.Encode(
-		h.NetworkId,
-		h.ProtocolVersion,
-		h.SoftwareVersion,
-		h.ServerPort,
-		h.NodeType,
-		h.Capabilities,
-	); err != nil {
-		return
-	}
-
-	return enc.Bytes(), nil
-}
-
-func (h *Handshake) Decode(dec *message.MessageDecoder, em message.EncodedMessage) (err error) {
-
-	dec.Reset(em)
-
-	var str string
-
-	if str, err = dec.ParseString(); err != nil {
-		return
-	}
-
-	if h.NetworkId, err = network.Select(str); err != nil {
-		return
-	}
-
-	if str, err = dec.ParseString(); err != nil {
-		return
-	}
-
-	h.ProtocolVersion = str
-
-	if str, err = dec.ParseString(); err != nil {
-		return
-	}
-
-	h.SoftwareVersion = str
-
-	var port uint16
-
-	if port, err = dec.ParseUint16(); err != nil {
-		return
-	}
-
-	h.ServerPort = port
-
-	var nType uint8
-
-	if nType, err = dec.ParseUint8(); err != nil {
-		return
-	}
-
-	h.NodeType = Type(nType)
-
-	if err = h.Capabilities.Decode(dec); err != nil {
-		return
-	}
-
-	return nil
-}
-
 func performHandshake(conn *websocket.Conn, h1 *Handshake) (h2 *Handshake, err error) {
 
 	var em message.EncodedMessage
@@ -118,8 +53,8 @@ func performHandshake(conn *websocket.Conn, h1 *Handshake) (h2 *Handshake, err e
 
 	h2 = MakeHandshake()
 
-	if err = h2.Decode(message.NewMessageDecoder(), em); err != nil {
-		return
+	if err = codec.Decode(h2, em); err != nil {
+		return nil, err
 	}
 
 	return h2, nil
