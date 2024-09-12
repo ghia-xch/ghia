@@ -38,9 +38,9 @@ var crawlCommand = &cobra.Command{
 				protocol.NewPeak,
 				func(em message.EncodedMessage) (err error) {
 
-					np := full_node.CreateNewPeak()
+					var np full_node.NewPeak
 
-					if err = codec.Decode(np, em); err != nil {
+					if err = codec.Decode(&np, em); err != nil {
 						return err
 					}
 
