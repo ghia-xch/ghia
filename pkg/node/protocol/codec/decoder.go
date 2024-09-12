@@ -47,7 +47,22 @@ func decodeValue(in reflect.Value, b []byte) ([]byte, error) {
 
 	case reflect.Slice:
 
-		// Parse a uint32 for the length of the slice.
+		var err error
+
+		var sliceLen = reflect.New(reflect.TypeOf(uint32(0))).Elem()
+
+		if b, err = DecodeElement(sliceLen, b); err != nil {
+			return nil, err
+		}
+
+		for i := uint32(0); i < sliceLen.Interface().(uint32); i++ {
+
+			var sliceVal = reflect.New(in.Elem().Type())
+
+			if b, err = decodeValue(sliceVal, b); err != nil {
+				return nil, err
+			}
+		}
 
 	case reflect.Map:
 
