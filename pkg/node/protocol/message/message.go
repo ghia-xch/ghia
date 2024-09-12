@@ -6,6 +6,11 @@ var (
 )
 
 type MessageType uint8
+
+func (m MessageType) Equals(other MessageType) bool {
+	return m == other
+}
+
 type Id uint16
 
 type Message interface {
