@@ -3,14 +3,10 @@ package codec
 import (
 	"encoding/binary"
 	"errors"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
-	log "github.com/sirupsen/logrus"
 	"reflect"
 )
-
-type DecodableElement interface {
-	Decode(b []byte) ([]byte, error)
-}
 
 func Decode(in Encodable, em message.EncodedMessage) error {
 
@@ -44,7 +40,6 @@ func decodeValue(in reflect.Value, b []byte) ([]byte, error) {
 		return decodeValue(in.Elem(), b)
 	case reflect.Struct:
 		return decodeStruct(in, b)
-
 	case reflect.Slice:
 
 		var err error
@@ -122,13 +117,27 @@ func decodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 	return b, nil
 }
 
+type DecodableElement interface {
+	Decode(b []byte) ([]byte, error)
+}
+
 func DecodeElement(elem reflect.Value, b []byte) ([]byte, error) {
 
 	decoderInterface := reflect.TypeOf((*DecodableElement)(nil)).Elem()
 
-	if elem.Type().Implements(decoderInterface) {
-		log.Infoln("Implements Interface")
-	}
+	spew.Dump(elem.Type().Implements(decoderInterface))
+
+	//
+	//if elem.Type().Implements(decoderInterface) {
+	//
+	//	res := elem.MethodByName("Decode").Call([]reflect.Value{reflect.ValueOf(b)})
+	//
+	//	if res[1].IsValid() {
+	//		return res[0].Interface().([]byte), nil
+	//	}
+	//
+	//	return nil, res[1].Interface().(error)
+	//}
 
 	switch elem.Kind() {
 
@@ -156,7 +165,8 @@ func DecodeElement(elem reflect.Value, b []byte) ([]byte, error) {
 		elem.SetString(string(b[:strLen]))
 
 		return b[strLen:], nil
+
 	}
 
-	return b, nil
+	return b, errors.New("couldn't find element")
 }

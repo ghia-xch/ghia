@@ -13,8 +13,6 @@ func (c *Client) handlerQueuing() {
 	var em message.EncodedMessage
 	var ok bool
 
-	var dec = message.NewMessageDecoder()
-
 	for {
 
 		select {
@@ -26,7 +24,7 @@ func (c *Client) handlerQueuing() {
 
 			l.Info("received message[", em.Type(), "] ", protocol.TypeAsString(em.Type()))
 
-			if err = c.handleInboundMessage(dec, em); err != nil {
+			if err = c.handleInboundMessage(em); err != nil {
 				l.Errorf("error handling inbound message: %v", err)
 			}
 
@@ -34,7 +32,7 @@ func (c *Client) handlerQueuing() {
 
 			l.Infoln("closing inbound queuing")
 
-			if err = c.drainInboundQueue(dec); err != nil {
+			if err = c.drainInboundQueue(); err != nil {
 				l.Errorf("error closing inbound message queue: %v", err)
 			}
 
@@ -131,14 +129,14 @@ func (c *Client) outboundQueuing() {
 	}
 }
 
-func (c *Client) drainInboundQueue(dec *message.MessageDecoder) (err error) {
+func (c *Client) drainInboundQueue() (err error) {
 
 	var inboundLen int
 
 	inboundLen = len(c.inbound)
 
 	for i := 0; i < inboundLen; i++ {
-		if err = c.handleInboundMessage(dec, <-c.inbound); err != nil {
+		if err = c.handleInboundMessage(<-c.inbound); err != nil {
 			return
 		}
 	}

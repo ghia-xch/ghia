@@ -15,7 +15,7 @@ func (c *Client) getMessageHandler(em message.EncodedMessage) (cb protocol.Callb
 	return <-c.callbacks
 }
 
-func (c *Client) handleInboundMessage(dec *message.MessageDecoder, em message.EncodedMessage) (err error) {
+func (c *Client) handleInboundMessage(em message.EncodedMessage) (err error) {
 
 	var cb protocol.Callback
 
@@ -23,11 +23,7 @@ func (c *Client) handleInboundMessage(dec *message.MessageDecoder, em message.En
 		return errors.New("handler for '" + protocol.TypeAsString(em.Type()) + "' not found")
 	}
 
-	if err = dec.Reset(em); err != nil {
-		return
-	}
-
-	if err = cb(dec); err != nil {
+	if err = cb(em); err != nil {
 		return
 	}
 

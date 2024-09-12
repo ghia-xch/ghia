@@ -14,37 +14,6 @@ type NewPeak struct {
 	UnfinishedRewardBlockHash protocol.Hash
 }
 
-func (n *NewPeak) Encode(enc *message.MessageEncoder) (em message.EncodedMessage, err error) {
-	return enc.Encode(
-		n.HeaderHash,
-		n.Height,
-		n.Weight,
-		n.ForkPointWithPreviousPeak,
-		n.UnfinishedRewardBlockHash,
-	)
-}
-
-func (n *NewPeak) Decode(dec *message.MessageDecoder) (err error) {
-
-	//if n.HeaderHash, err = dec.ParseHash(); err != nil {
-	//	return
-	//}
-
-	if n.Height, err = dec.ParseUint32(); err != nil {
-		return
-	}
-
-	if n.Weight, err = dec.ParseUint128(); err != nil {
-		return
-	}
-
-	if n.ForkPointWithPreviousPeak, err = dec.ParseUint32(); err != nil {
-		return
-	}
-
-	//if n.UnfinishedRewardBlockHash, err = dec.ParseHash(); err != nil {
-	//	return
-	//}
-
-	return
+func (n *NewPeak) Type() message.MessageType {
+	return protocol.NewPeak
 }
