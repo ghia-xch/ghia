@@ -71,20 +71,20 @@ var crawlCommand = &cobra.Command{
 					var rq full_node.RequestTransaction
 					rq.TransactionId = nt.TransactionId
 
-					spew.Dump(codec.Encode(nil, &nt))
-					spew.Dump(codec.Encode(nil, &rq))
+					if em, err = codec.Encode(nil, &rq); err != nil {
+						return err
+					}
 
-					//if err = client.SendWith(
-					//	full_node.CreateRequestTransaction(nt.TransactionId),
-					//	func(dec *protocol.MessageDecoder) (err error) {
-					//
-					//		spew.Dump(dec.Type())
-					//
-					//		return err
-					//	},
-					//); err != nil {
-					//	return err
-					//}
+					if err = client.SendWith(em,
+						func(em message.EncodedMessage) (err error) {
+
+							spew.Dump(em)
+
+							return err
+						},
+					); err != nil {
+						return err
+					}
 
 					return nil
 				},
