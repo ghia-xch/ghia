@@ -6,18 +6,18 @@ const (
 	minEncodedMessageLen   = 6
 	minIdEncodedMessageLen = 8
 
-	NilMessageType = MessageType(0)
+	NilMessageType = Type(0)
 )
 
 type EncodedMessage []byte
 
-func (em EncodedMessage) Type() MessageType {
+func (em EncodedMessage) Type() Type {
 
 	if len(em) == 0 {
 		return NilMessageType
 	}
 
-	return MessageType(em[0])
+	return Type(em[0])
 }
 
 func (em EncodedMessage) HasId() bool {

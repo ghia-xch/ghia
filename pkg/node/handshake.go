@@ -31,7 +31,7 @@ type Handshake struct {
 	Capabilities    capability.Set
 }
 
-func (h *Handshake) Type() message.MessageType {
+func (h *Handshake) Type() message.Type {
 	return protocol.HandshakeType
 }
 

@@ -18,7 +18,7 @@ type MessageEncoder struct {
 	pos    int
 }
 
-func (m *MessageEncoder) Reset(t MessageType, id *Id) {
+func (m *MessageEncoder) Reset(t Type, id *Id) {
 
 	// The default header is 6 bytes.
 	// One byte for the message type,
@@ -160,7 +160,7 @@ func NewMessageEncoder(size int) *MessageEncoder {
 var MessageAttributeNotDecodableError error
 
 type MessageDecoder struct {
-	msgType MessageType
+	msgType Type
 	id      Id
 	dataLen uint32
 	em      EncodedMessage
@@ -179,7 +179,7 @@ func (md *MessageDecoder) parseHeader() (err error) {
 		return MessageAttributeNotDecodableError
 	}
 
-	md.msgType = MessageType(md.em[0])
+	md.msgType = Type(md.em[0])
 	md.pos++
 
 	// Parse the message optional message id.
@@ -228,7 +228,7 @@ func (md *MessageDecoder) Bytes() []byte {
 	return md.em
 }
 
-func (md *MessageDecoder) Type() MessageType {
+func (md *MessageDecoder) Type() Type {
 	return md.msgType
 }
 

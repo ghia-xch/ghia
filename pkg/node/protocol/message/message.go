@@ -1,20 +1,20 @@
 package message
 
 var (
-	NullMessageType    = MessageType(0)
+	NullMessageType    = Type(0)
 	NullId          Id = Id(0)
 )
 
-type MessageType uint8
+type Type uint8
 
-func (m MessageType) Equals(other MessageType) bool {
+func (m Type) Equals(other Type) bool {
 	return m == other
 }
 
 type Id uint16
 
 type Message interface {
-	Type() MessageType
+	Type() Type
 	Id() Id
 	Data() []byte
 }

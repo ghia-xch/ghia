@@ -24,7 +24,7 @@ type Client struct {
 	outbound chan message.EncodedMessage
 
 	callbacks chan protocol.Callback
-	handlers  map[message.MessageType]protocol.Callback
+	handlers  map[message.Type]protocol.Callback
 
 	isClosing chan bool
 	isClosed  chan bool
@@ -160,7 +160,7 @@ func NewClient(peerInfo *peer.PeerInfo) (c *Client) {
 		outbound: make(chan message.EncodedMessage, MaxQueuedOutboundMessages),
 
 		callbacks: make(chan protocol.Callback, MaxQueuedOutboundMessages),
-		handlers:  make(map[message.MessageType]protocol.Callback),
+		handlers:  make(map[message.Type]protocol.Callback),
 
 		isClosing: make(chan bool, 1),
 		isClosed:  make(chan bool, 1),

@@ -22,7 +22,7 @@ type RejectBlock struct {
 // 	IncludeTransactionBlock bool
 //}
 
-var RequestBlocksType message.MessageType = 29
+var RequestBlocksType message.Type = 29
 
 type RequestBlocks [10]byte
 
@@ -53,7 +53,7 @@ func (r RequestBlocks) Encode() (em message.EncodedMessage, err error) {
 	r = em[0:10]
 }*/
 
-var RespondBlocksType message.MessageType = 38
+var RespondBlocksType message.Type = 38
 
 type FullBlock struct{}
 

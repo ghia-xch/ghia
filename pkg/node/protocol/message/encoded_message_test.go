@@ -6,7 +6,7 @@ import (
 
 type encodedMessageTypeTestCase struct {
 	em           EncodedMessage
-	expectedType MessageType
+	expectedType Type
 }
 
 var encodedMessageTypeTestCases = []encodedMessageTypeTestCase{
@@ -20,7 +20,7 @@ var encodedMessageTypeTestCases = []encodedMessageTypeTestCase{
 	},
 	{
 		em:           []byte{255},
-		expectedType: MessageType(255),
+		expectedType: Type(255),
 	},
 }
 

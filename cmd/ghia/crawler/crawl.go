@@ -28,7 +28,6 @@ var crawlCommand = &cobra.Command{
 
 		l.Println("-- ghia (" + viper.GetString("network") + ") - " + pkg.SemVer + " - PoST Freedom. --")
 
-		//var err error
 		var client *node.Client
 
 		client = node.NewClient(peer.NewPeerInfo("192.168.8.117", 8444))

@@ -19,7 +19,7 @@ func Decode(in Encodable, em message.EncodedMessage) error {
 		return errors.New("decodable message is empty.")
 	}
 
-	if message.MessageType(em[0]) != in.Type() {
+	if message.Type(em[0]) != in.Type() {
 		return errors.New("message types do not match.")
 	}
 

@@ -10,7 +10,7 @@ import (
 )
 
 type Encodable interface {
-	Type() message.MessageType
+	Type() message.Type
 }
 
 type EncodableElement interface {

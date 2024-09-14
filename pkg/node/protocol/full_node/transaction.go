@@ -12,16 +12,16 @@ type NewTransaction struct {
 	Fees          uint64
 }
 
-func (r *NewTransaction) Type() message.MessageType { return protocol.NewTransaction }
+func (r *NewTransaction) Type() message.Type { return protocol.NewTransaction }
 
 type RequestTransaction struct {
 	TransactionId protocol.Hash
 }
 
-func (r *RequestTransaction) Type() message.MessageType { return protocol.RequestTransaction }
+func (r *RequestTransaction) Type() message.Type { return protocol.RequestTransaction }
 
 type RespondTransaction struct {
 	Transaction coin.SpendBundle
 }
 
-func (r *RespondTransaction) Type() message.MessageType { return protocol.RespondTransaction }
+func (r *RespondTransaction) Type() message.Type { return protocol.RespondTransaction }

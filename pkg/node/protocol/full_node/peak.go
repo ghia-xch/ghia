@@ -14,6 +14,4 @@ type NewPeak struct {
 	UnfinishedRewardBlockHash protocol.Hash
 }
 
-func (n *NewPeak) Type() message.MessageType {
-	return protocol.NewPeak
-}
+func (np *NewPeak) Type() message.Type { return protocol.NewPeak }
