@@ -1,89 +1,56 @@
 package full_node
 
 import (
-	"encoding/binary"
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 )
-
-////
 
 type RequestBlock struct {
 	Height                  uint32
 	IncludeTransactionBlock bool
 }
 
+func (r *RequestBlock) Type() message.Type { return protocol.RequestBlock }
+
+type RespondBlock struct {
+	Block FullBlock
+}
+
+func (r *RespondBlock) Type() message.Type { return protocol.RespondBlock }
+
 type RejectBlock struct {
 	Height uint32
 }
 
-// type RequestBlocks struct {
-// 	StartHeight             uint32
-// 	EndHeight               uint32
-// 	IncludeTransactionBlock bool
-//}
+func (r *RejectBlock) Type() message.Type { return protocol.RejectBlock }
 
-var RequestBlocksType message.Type = 29
-
-type RequestBlocks [10]byte
-
-func RequestBlocksMessage(start uint32, end uint32, includeTxBlock bool) (r RequestBlocks) {
-
-	r[0] = byte(RequestBlocksType)
-
-	binary.BigEndian.PutUint32(r[1:5], start)
-	binary.BigEndian.PutUint32(r[6:10], end)
-
-	if includeTxBlock {
-		r[9] = 1
-	}
-
-	return
+type RequestBlocks struct {
+	StartHeight             uint32
+	EndHeight               uint32
+	IncludeTransactionBlock bool
 }
 
-func (r RequestBlocks) Encode() (em message.EncodedMessage, err error) {
-	return r[:], nil
+func (r *RequestBlocks) Type() message.Type { return protocol.RequestBlocks }
+
+type RespondBlocks struct {
+	StartHeight uint32
+	EndHeight   uint32
+	Blocks      []FullBlock
 }
 
-/*func (r RequestBlocks) Decode(em message.EncodedMessage) error {
+func (r *RespondBlocks) Type() message.Type { return protocol.RespondBlocks }
 
-	if len(em) != 10 {
+type RejectBlocks struct {
+	StartHeight uint32
+	EndHeight   uint32
+}
 
-	}
+func (r *RejectBlocks) Type() message.Type { return protocol.RejectBlocks }
 
-	r = em[0:10]
-}*/
-
-var RespondBlocksType message.Type = 38
+///
 
 type FullBlock struct{}
 
-type RespondBlocks struct {
-	startHeight uint32
-	endHeight   uint32
-	blocks      []FullBlock
-}
-
-//@streamable
-//@dataclass(frozen=True)
-//class RespondBlocks(Streamable):
-//start_height: uint32
-//end_height: uint32
-//blocks: List[FullBlock]
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RejectBlocks(Streamable):
-//start_height: uint32
-//end_height: uint32
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RespondBlock(Streamable):
-//block: FullBlock
-//
-//
 //@streamable
 //@dataclass(frozen=True)
 //class NewUnfinishedBlock(Streamable):
@@ -156,6 +123,7 @@ type RespondBlocks struct {
 //class RequestMempoolTransactions(Streamable):
 //filter: bytes
 //
+
 //
 //@streamable
 //@dataclass(frozen=True)
@@ -184,16 +152,3 @@ type RespondBlocks struct {
 //vdf_info: VDFInfo
 //vdf_proof: VDFProof
 //
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RequestPeers(Streamable):
-//"""
-//Return full list of peers
-//"""
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RespondPeers(Streamable):
-//peer_list: List[TimestampedPeerInfo]
