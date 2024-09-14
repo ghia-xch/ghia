@@ -51,43 +51,43 @@ var crawlCommand = &cobra.Command{
 					return err
 				},
 			),
-			protocol.Handler(
-				protocol.NewTransaction,
-				func(em message.EncodedMessage) (err error) {
-
-					var nt full_node.NewTransaction
-
-					if err = codec.Decode(&nt, em); err != nil {
-						return err
-					}
-
-					l.Info("new transaction found: [", nt.TransactionId.String(), "]")
-					l.Info("-- cost: ", nt.Cost)
-					l.Info("-- fees: ", nt.Fees)
-
-					l.Info("requesting transaction: [", nt.TransactionId.String(), "]")
-
-					var rq full_node.RequestTransaction
-					rq.TransactionId = nt.TransactionId
-
-					if em, err = codec.Encode(nil, &rq); err != nil {
-						return err
-					}
-
-					if err = client.SendWith(em,
-						func(em message.EncodedMessage) (err error) {
-
-							spew.Dump(em)
-
-							return err
-						},
-					); err != nil {
-						return err
-					}
-
-					return nil
-				},
-			),
+			//protocol.Handler(
+			//	protocol.NewTransaction,
+			//	func(em message.EncodedMessage) (err error) {
+			//
+			//		var nt full_node.NewTransaction
+			//
+			//		if err = codec.Decode(&nt, em); err != nil {
+			//			return err
+			//		}
+			//
+			//		l.Info("new transaction found: [", nt.TransactionId.String(), "]")
+			//		l.Info("-- cost: ", nt.Cost)
+			//		l.Info("-- fees: ", nt.Fees)
+			//
+			//		l.Info("requesting transaction: [", nt.TransactionId.String(), "]")
+			//
+			//		var rq full_node.RequestTransaction
+			//		rq.TransactionId = nt.TransactionId
+			//
+			//		if em, err = codec.Encode(nil, &rq); err != nil {
+			//			return err
+			//		}
+			//
+			//		if err = client.SendWith(em,
+			//			func(em message.EncodedMessage) (err error) {
+			//
+			//				spew.Dump(em)
+			//
+			//				return err
+			//			},
+			//		); err != nil {
+			//			return err
+			//		}
+			//
+			//		return nil
+			//	},
+			//),
 			//protocol.Handler(
 			//	protocol.NewSignagePointOrEndOfSubSlot,
 			//	func(dec *message.MessageDecoder) (err error) {
@@ -105,6 +105,30 @@ var crawlCommand = &cobra.Command{
 		}
 
 		spew.Dump(client.IsCapableOf(capability.Base))
+
+		var em message.EncodedMessage
+		var peersReq full_node.RequestPeers
+
+		if em, err = codec.Encode(nil, &peersReq); err != nil {
+			l.Fatalln(err)
+			os.Exit(1)
+		}
+
+		err = client.SendWith(em, func(rem message.EncodedMessage) (err error) {
+
+			spew.Dump(rem)
+
+			var respondPeers full_node.RespondPeers
+
+			if err = codec.Decode(&respondPeers, rem); err != nil {
+				l.Fatalln(err)
+				os.Exit(1)
+			}
+
+			spew.Dump(respondPeers)
+
+			return nil
+		})
 
 		//h1 := sha256.New()
 		//h1.Write([]byte("fdhjkdshfjkdshff"))
