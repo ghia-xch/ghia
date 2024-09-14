@@ -3,7 +3,6 @@ package codec
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"reflect"
 )
@@ -49,8 +48,6 @@ func decodeValue(in reflect.Value, b []byte) ([]byte, error) {
 		if b, err = DecodeElement(sliceLen, b); err != nil {
 			return nil, err
 		}
-
-		spew.Dump(sliceLen.Interface())
 
 		for i := uint32(0); i < sliceLen.Interface().(uint32); i++ {
 
