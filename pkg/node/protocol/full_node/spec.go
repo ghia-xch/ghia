@@ -6,39 +6,6 @@ type FullBlock struct{}
 
 //@streamable
 //@dataclass(frozen=True)
-//class NewUnfinishedBlock(Streamable):
-//unfinished_reward_hash: bytes32
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RequestUnfinishedBlock(Streamable):
-//unfinished_reward_hash: bytes32
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class NewUnfinishedBlock2(Streamable):
-//unfinished_reward_hash: bytes32
-//foliage_hash: Optional[bytes32]
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RequestUnfinishedBlock2(Streamable):
-//unfinished_reward_hash: bytes32
-//foliage_hash: Optional[bytes32]
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RespondUnfinishedBlock(Streamable):
-//unfinished_block: UnfinishedBlock
-//
-//
-
-//@streamable
-//@dataclass(frozen=True)
 //class NewSignagePointOrEndOfSubSlot(Streamable):
 //prev_challenge_hash: Optional[bytes32]
 //challenge_hash: bytes32
@@ -69,39 +36,4 @@ type FullBlock struct{}
 //class RespondEndOfSubSlot(Streamable):
 //end_of_slot_bundle: EndOfSubSlotBundle
 //
-//
-
-//@streamable
-//@dataclass(frozen=True)
-//class RequestMempoolTransactions(Streamable):
-//filter: bytes
-//
-
-//
-//@streamable
-//@dataclass(frozen=True)
-//class NewCompactVDF(Streamable):
-//height: uint32
-//header_hash: bytes32
-//field_vdf: uint8
-//vdf_info: VDFInfo
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RequestCompactVDF(Streamable):
-//height: uint32
-//header_hash: bytes32
-//field_vdf: uint8
-//vdf_info: VDFInfo
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RespondCompactVDF(Streamable):
-//height: uint32
-//header_hash: bytes32
-//field_vdf: uint8
-//vdf_info: VDFInfo
-//vdf_proof: VDFProof
 //

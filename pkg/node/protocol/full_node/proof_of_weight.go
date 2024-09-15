@@ -2,12 +2,26 @@ package full_node
 
 import (
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 )
 
 type RequestProofOfWeight struct {
 	TotalNumberOfBlocks uint32
 	Tip                 protocol.Hash
 }
+
+func (r *RequestProofOfWeight) Type() message.Type { return protocol.RequestProofOfWeight }
+
+type RespondProofOfWeight struct {
+	WeightProof WeightProof
+	Tip         [32]byte
+}
+
+func (r *RespondProofOfWeight) Type() message.Type { return protocol.RespondProofOfWeight }
+
+///
+///
+///
 
 type HeaderBlock struct {
 }
@@ -40,9 +54,4 @@ type WeightProof struct {
 	SubEpochs        []SubEpochData
 	SubEpochSegments []SubEpochChallengeSegment
 	RecentChainData  []HeaderBlock
-}
-
-type RespondProofOfWeight struct {
-	WeightProof WeightProof
-	Tip         [32]byte
 }
