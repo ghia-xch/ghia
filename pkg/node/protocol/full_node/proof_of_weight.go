@@ -3,6 +3,7 @@ package full_node
 import (
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/vdf"
 )
 
 type RequestProofOfWeight struct {
@@ -29,18 +30,10 @@ type HeaderBlock struct {
 type SubSlotData struct {
 }
 
-type ClassGroupElement [100]byte
-
-type VDFInfo struct {
-	Challenge     protocol.Hash
-	NumIterations uint64
-	Output        ClassGroupElement
-}
-
 type SubEpochChallengeSegment struct {
 	SubEpochN     uint32
 	SubSlots      []SubSlotData
-	RcSlotEndInfo *VDFInfo
+	RcSlotEndInfo *vdf.VDFInfo
 }
 
 type SubEpochData struct {
