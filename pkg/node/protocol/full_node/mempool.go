@@ -1,7 +1,12 @@
 package full_node
 
-//@streamable
-//@dataclass(frozen=True)
-//class RequestMempoolTransactions(Streamable):
-//filter: bytes
-//
+import (
+	"github.com/ghia-xch/ghia/pkg/node/protocol"
+	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
+)
+
+type RequestMempoolTransactions struct {
+	Filter []byte
+}
+
+func (r *RequestMempoolTransactions) Type() message.Type { return protocol.RequestMempoolTransactions }
