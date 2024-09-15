@@ -23,12 +23,18 @@ type RequestCompactVDF struct {
 
 func (c *RequestCompactVDF) Type() message.Type { return protocol.RequestCompactVDF }
 
-//@streamable
-//@dataclass(frozen=True)
-//class RespondCompactVDF(Streamable):
-//height: uint32
-//header_hash: bytes32
-//field_vdf: uint8
-//vdf_info: VDFInfo
-//vdf_proof: VDFProof
-//
+type RespondCompactVDF struct {
+	Height     uint32
+	HeaderHash protocol.Hash
+	FieldVDF   uint8
+	VDFInfo    VDFInfo
+	VDFProof   VDFProof
+}
+
+func (c *RespondCompactVDF) Type() message.Type { return protocol.RespondCompactVDF }
+
+///
+///
+///
+
+type VDFProof struct{}
