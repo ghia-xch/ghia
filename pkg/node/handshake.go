@@ -6,7 +6,6 @@ import (
 	"github.com/ghia-xch/ghia/pkg/node/capability"
 	"github.com/ghia-xch/ghia/pkg/node/protocol"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/codec"
-	"github.com/ghia-xch/ghia/pkg/node/protocol/full_node"
 	"github.com/ghia-xch/ghia/pkg/node/protocol/message"
 	"github.com/gorilla/websocket"
 )
@@ -14,7 +13,7 @@ import (
 var (
 	DefaultHandshake = &Handshake{
 		NetworkId:       network.DefaultNetwork,
-		ProtocolVersion: full_node.ProtocolVersion,
+		ProtocolVersion: protocol.Version,
 		SoftwareVersion: pkg.Version,
 		ServerPort:      8444,
 		NodeType:        FullNode,
