@@ -51,4 +51,34 @@ func (n *RespondEndOfSubSlot) Type() message.Type {
 ///
 ///
 
-type EndOfSubSlotBundle struct{}
+type SubSlotProofs struct {
+	CCSlotProof  vdf.VDFProof
+	ICCSlotProof *vdf.VDFProof `cenc:"optional"`
+	RCSlotProof  vdf.VDFProof
+}
+
+type RewardChainSubSlot struct {
+	EndOfSlotVDF   vdf.VDFInfo
+	CCSubSlotHash  protocol.Hash
+	ICCSubSlotHash *protocol.Hash `cenc:"optional"`
+	Deficit        uint8
+}
+
+type InfusedChallengeChainSubSlot struct {
+	ICCEndOfSlotVDF vdf.VDFInfo
+}
+
+type ChallengeChainSubSlot struct {
+	CCEndOfSlotVDF       vdf.VDFInfo
+	InfusedCCSubSlotHash *protocol.Hash `cenc:"optional"`
+	SubEpochSummaryHash  *protocol.Hash `cenc:"optional"`
+	NewSubSlotIterations *uint64        `cenc:"optional"`
+	NewDifficulty        *uint64        `cenc:"optional"`
+}
+
+type EndOfSubSlotBundle struct {
+	ChallengeChain        ChallengeChainSubSlot
+	InfusedChallengeChain InfusedChallengeChainSubSlot `cenc:"optional"`
+	RewardChain           RewardChainSubSlot
+	Proofs                SubSlotProofs
+}
