@@ -23,36 +23,3 @@ type RejectBlock struct {
 }
 
 func (r *RejectBlock) Type() message.Type { return protocol.RejectBlock }
-
-//@streamable
-//@dataclass(frozen=True)
-//class NewUnfinishedBlock(Streamable):
-//unfinished_reward_hash: bytes32
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RequestUnfinishedBlock(Streamable):
-//unfinished_reward_hash: bytes32
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class NewUnfinishedBlock2(Streamable):
-//unfinished_reward_hash: bytes32
-//foliage_hash: Optional[bytes32]
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RequestUnfinishedBlock2(Streamable):
-//unfinished_reward_hash: bytes32
-//foliage_hash: Optional[bytes32]
-//
-//
-//@streamable
-//@dataclass(frozen=True)
-//class RespondUnfinishedBlock(Streamable):
-//unfinished_block: UnfinishedBlock
-//
-//
