@@ -125,6 +125,9 @@ func encodeValue(v reflect.Value, b []byte) ([]byte, error) {
 	return nil, nil
 }
 
+const tagName = "cenc"
+const optionalTag = "optional"
+
 func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 
 	if in.Kind() != reflect.Struct {
@@ -137,6 +140,30 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 
 		if !in.Type().Field(i).IsExported() {
 			continue
+		}
+
+		if in.Type().Field(i).Tag.Get(tagName) == optionalTag {
+
+			if in.Type().Field(i).Type.Kind() != reflect.Pointer {
+				return nil, errors.New("optional tag requires a pointer")
+			}
+
+			if in.Field(i).IsNil() {
+
+				if b, err = EncodeElement(uint8(0), b); err != nil {
+					return nil, err
+				}
+
+				continue
+			}
+
+			if b, err = EncodeElement(uint8(1), b); err != nil {
+				return nil, err
+			}
+
+			if b, err = encodeValue(in.Field(i), b); err != nil {
+				return nil, err
+			}
 		}
 
 		if b, err = encodeValue(in.Field(i), b); err != nil {

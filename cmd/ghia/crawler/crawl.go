@@ -2,6 +2,7 @@ package crawler
 
 import (
 	"context"
+	"encoding/hex"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/node"
@@ -27,6 +28,25 @@ var crawlCommand = &cobra.Command{
 		var err error
 
 		l.Println("-- ghia (" + viper.GetString("network") + ") - " + pkg.SemVer + " - PoST Freedom. --")
+
+		a, _ := hex.DecodeString("16069bd1d0c581e0014f48aa828209a8a351d7dd069999766714fefdfc07fe95")
+
+		b := protocol.Hash(a)
+
+		nub := full_node.NewUnfinishedBlock2{
+			UnfinishedRewardHash: protocol.Hash(a),
+			FoliageHash:          &b,
+		}
+
+		spew.Dump(codec.Encode(nil, &nub))
+
+		rq := full_node.RequestTransaction{
+			TransactionId: protocol.Hash(a),
+		}
+
+		spew.Dump(codec.Encode(nil, &rq))
+
+		os.Exit(0)
 
 		var client *node.Client
 
