@@ -112,13 +112,17 @@ func decodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 
 		if in.Type().Field(i).Tag.Get(tagName) == optionalTag {
 
-			var optional uint8
+			if in.Field(i).Kind() != reflect.Pointer {
+				return nil, errors.New("optional tag is not a pointer")
+			}
 
-			if b, err = DecodeElement(reflect.ValueOf(&optional).Elem(), b); err != nil {
+			var optionEnabled uint8
+
+			if b, err = DecodeElement(reflect.ValueOf(&optionEnabled).Elem(), b); err != nil {
 				return nil, err
 			}
 
-			if optional == 0 {
+			if optionEnabled == 0 {
 				continue
 			}
 
