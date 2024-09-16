@@ -2,7 +2,6 @@ package crawler
 
 import (
 	"context"
-	"encoding/hex"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghia-xch/ghia/pkg"
 	"github.com/ghia-xch/ghia/pkg/node"
@@ -28,38 +27,6 @@ var crawlCommand = &cobra.Command{
 		var err error
 
 		l.Println("-- ghia (" + viper.GetString("network") + ") - " + pkg.SemVer + " - PoST Freedom. --")
-
-		a, _ := hex.DecodeString("16069bd1d0c581e0014f48aa828209a8a351d7dd069999766714fefdfc07fe95")
-		c, _ := hex.DecodeString("26069bd1d0c581e0014f48aa828209a8a351d7dd069999766714fefdfc07fe96")
-
-		b := protocol.Hash(c)
-
-		nub1 := full_node.NewUnfinishedBlock2{
-			UnfinishedRewardHash: protocol.Hash(a),
-			FoliageHash:          nil,
-		}
-
-		nub2 := full_node.NewUnfinishedBlock2{
-			UnfinishedRewardHash: protocol.Hash(a),
-			FoliageHash:          &b,
-		}
-
-		em1, _ := codec.Encode(nil, &nub1)
-		em2, _ := codec.Encode(nil, &nub2)
-
-		spew.Dump(codec.Encode(nil, &nub1))
-		spew.Dump(codec.Encode(nil, &nub2))
-
-		nub3 := full_node.NewUnfinishedBlock2{}
-		nub4 := full_node.NewUnfinishedBlock2{}
-
-		spew.Dump(codec.Decode(&nub3, em1))
-		spew.Dump(codec.Decode(&nub4, em2))
-
-		spew.Dump(nub3)
-		spew.Dump(nub4)
-
-		os.Exit(0)
 
 		var client *node.Client
 
