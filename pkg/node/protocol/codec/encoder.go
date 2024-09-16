@@ -160,10 +160,6 @@ func encodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 			if b, err = EncodeElement(uint8(1), b); err != nil {
 				return nil, err
 			}
-
-			if b, err = encodeValue(in.Field(i), b); err != nil {
-				return nil, err
-			}
 		}
 
 		if b, err = encodeValue(in.Field(i), b); err != nil {

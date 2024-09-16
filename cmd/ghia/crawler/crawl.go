@@ -33,18 +33,18 @@ var crawlCommand = &cobra.Command{
 
 		b := protocol.Hash(a)
 
-		nub := full_node.NewUnfinishedBlock2{
+		nub1 := full_node.NewUnfinishedBlock2{
+			UnfinishedRewardHash: protocol.Hash(a),
+			FoliageHash:          nil,
+		}
+
+		nub2 := full_node.NewUnfinishedBlock2{
 			UnfinishedRewardHash: protocol.Hash(a),
 			FoliageHash:          &b,
 		}
 
-		spew.Dump(codec.Encode(nil, &nub))
-
-		rq := full_node.RequestTransaction{
-			TransactionId: protocol.Hash(a),
-		}
-
-		spew.Dump(codec.Encode(nil, &rq))
+		spew.Dump(codec.Encode(nil, &nub1))
+		spew.Dump(codec.Encode(nil, &nub2))
 
 		os.Exit(0)
 

@@ -110,6 +110,20 @@ func decodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 			continue
 		}
 
+		if in.Type().Field(i).Tag.Get(tagName) == optionalTag {
+
+			var optional uint8
+
+			if b, err = DecodeElement(reflect.ValueOf(&optional).Elem(), b); err != nil {
+				return nil, err
+			}
+
+			if optional == 0 {
+				continue
+			}
+
+		}
+
 		if b, err = decodeValue(in.Field(i), b); err != nil {
 			return nil, err
 		}
