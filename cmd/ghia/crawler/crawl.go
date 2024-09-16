@@ -30,8 +30,9 @@ var crawlCommand = &cobra.Command{
 		l.Println("-- ghia (" + viper.GetString("network") + ") - " + pkg.SemVer + " - PoST Freedom. --")
 
 		a, _ := hex.DecodeString("16069bd1d0c581e0014f48aa828209a8a351d7dd069999766714fefdfc07fe95")
+		c, _ := hex.DecodeString("26069bd1d0c581e0014f48aa828209a8a351d7dd069999766714fefdfc07fe96")
 
-		b := protocol.Hash(a)
+		b := protocol.Hash(c)
 
 		nub1 := full_node.NewUnfinishedBlock2{
 			UnfinishedRewardHash: protocol.Hash(a),
@@ -43,8 +44,20 @@ var crawlCommand = &cobra.Command{
 			FoliageHash:          &b,
 		}
 
+		em1, _ := codec.Encode(nil, &nub1)
+		em2, _ := codec.Encode(nil, &nub2)
+
 		spew.Dump(codec.Encode(nil, &nub1))
 		spew.Dump(codec.Encode(nil, &nub2))
+
+		nub3 := full_node.NewUnfinishedBlock2{}
+		nub4 := full_node.NewUnfinishedBlock2{}
+
+		spew.Dump(codec.Decode(&nub3, em1))
+		spew.Dump(codec.Decode(&nub4, em2))
+
+		spew.Dump(nub3)
+		spew.Dump(nub4)
 
 		os.Exit(0)
 

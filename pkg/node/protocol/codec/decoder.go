@@ -122,6 +122,7 @@ func decodeStruct(in reflect.Value, b []byte) ([]byte, error) {
 				continue
 			}
 
+			in.Field(i).Set(reflect.New(in.Field(i).Type().Elem()))
 		}
 
 		if b, err = decodeValue(in.Field(i), b); err != nil {
