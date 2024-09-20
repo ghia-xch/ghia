@@ -181,7 +181,6 @@ func DecodeElement(elem reflect.Value, b []byte) ([]byte, error) {
 		elem.SetString(string(b[:strLen]))
 
 		return b[strLen:], nil
-
 	}
 
 	return b, errors.New("couldn't find element")

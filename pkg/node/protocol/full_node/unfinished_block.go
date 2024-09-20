@@ -25,14 +25,14 @@ func (u *RespondUnfinishedBlock) Type() message.Type { return protocol.RespondUn
 
 type NewUnfinishedBlock2 struct {
 	UnfinishedRewardHash protocol.Hash
-	FoliageHash          *protocol.Hash `cenc:"optional"`
+	FoliageHash          protocol.Optional[protocol.Hash]
 }
 
 func (u *NewUnfinishedBlock2) Type() message.Type { return protocol.NewUnfinishedBlock2 }
 
 type RequestUnfinishedBlock2 struct {
 	UnfinishedRewardHash protocol.Hash
-	FoliageHash          *protocol.Hash `cenc:"optional"`
+	FoliageHash          protocol.Optional[protocol.Hash]
 }
 
 func (u *RequestUnfinishedBlock2) Type() message.Type { return protocol.RequestUnfinishedBlock2 }

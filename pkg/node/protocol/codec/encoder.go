@@ -195,8 +195,8 @@ func EncodeElement(in any, b []byte) ([]byte, error) {
 		b = binary.BigEndian.AppendUint32(b, uint32(len(v)))
 		return append(b, []byte(v)...), nil
 	case uint128.Uint128:
-		b = binary.BigEndian.AppendUint64(b, v.Hi)
-		return binary.BigEndian.AppendUint64(b, v.Lo), nil
+		b = binary.BigEndian.AppendUint64(b, v.Lo)
+		return binary.BigEndian.AppendUint64(b, v.Hi), nil
 	case []byte:
 		b = binary.BigEndian.AppendUint32(b, uint32(len(v)))
 		return append(b, v...), nil
